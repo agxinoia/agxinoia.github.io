@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arki</title>
+    <link id="site-favicon" rel="icon" href="favicon-32x32.png" type="image/png">
+    <!-- Inter Font for that premium agency look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --bg-color: #050505;
+            --bg-surface: #0a0a0a;
+            --text-primary: #ededed;
+            --text-muted: #737373;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --accent: #ffffff;
+            --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 10px;
+        }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: grid;
+            grid-template-columns: 120px minmax(0, 820px) 300px;
+            gap: 3rem;
+            max-width: 1460px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            min-height: 100vh;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 100px minmax(0, 1fr) 280px;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                padding: 2rem;
+            }
+
+            .sidebar-left,
+            .sidebar-right {
+                position: relative !important;
+                top: 0 !important;
+                height: auto !important;
+                padding: 2rem 0 !important;
+            }
+
+            /* Reset TOC on mobile to stay above content */
+            .toc-wrapper {
+                position: relative !important;
+                left: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                width: 100% !important;
+            }
+
+            .toc-wrapper::after {
+                display: none !important;
+            }
+        }
+
+        /* --- SIDEBARS --- */
+        .sidebar-left,
+        .sidebar-right {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            /* Match the content area's top padding exactly */
+            padding: 5rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-right {
+            justify-content: flex-start;
+            /* Ensure right sidebar is at the very top */
+            gap: 3rem;
+        }
+
+        .sidebar-left {
+            justify-content: flex-start;
+            /* Elements start from top padding */
+            align-items: flex-start;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Remove the trailing line specifically for the TOC Title */
+        .toc-title::after {
+            display: none;
+        }
+
+        /* --- LEFT: TOC --- */
+        .toc-wrapper {
+            position: fixed;
+            left: 30px;
+            /* 30px pixel gap from the extreme left edge of the page */
+            top: 50%;
+            transform: translateY(-50%);
+            width: max-content;
+            z-index: 50;
+        }
+
+        /* Expanded hover area to keep menu open gracefully */
+        .toc-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -40px;
+            bottom: -40px;
+            left: -30px;
+            right: -40px;
+            z-index: 0;
+        }
+
+        .toc-title {
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .toc-wrapper:hover .toc-title {
+            opacity: 1;
+        }
+
+        /* The Line-Style TOC */
+        .toc-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            /* Ensures perfect horizontal alignment of all lines */
+            gap: 1.2rem;
+            cursor: pointer;
+            position: relative;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+            padding: 0.25rem 0;
+            width: max-content;
+        }
+
+        .toc-line {
+            width: 16px;
+            height: 2px;
+            background-color: #333;
+            border-radius: 2px;
+            transition: var(--transition-smooth);
+            flex-shrink: 0;
+        }
+
+        .toc-text {
+            font-size: 0.85rem;
+            line-height: 1;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(-15px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            margin-top: 1px;
+        }
+
+        /* Indent only the text for H3, keeping lines flush left */
+        .toc-text.h3-indent {
+            margin-left: 0.75rem;
+        }
+
+        .toc-wrapper:hover .toc-text {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .toc-item:hover .toc-line,
+        .toc-item.active .toc-line {
+            background-color: var(--accent);
+            width: 32px;
+        }
+
+        .toc-item:hover .toc-text,
+        .toc-item.active .toc-text {
+            color: var(--text-primary);
+        }
+
+        /* --- RIGHT: EXPLORER --- */
+        .explorer-nav {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        /* Continuous baseline border for the tabs */
+        .explorer-nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .explorer-tab {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            padding-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+            /* Stay above the baseline */
+        }
+
+        .explorer-tab.active {
+            color: var(--text-primary);
+        }
+
+        /* Active highlight perfectly aligns over baseline */
+        .explorer-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        .explorer-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #list-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .explorer-item a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .explorer-item a i {
+            font-size: 1rem;
+            width: 18px;
+            text-align: center;
+            color: #555;
+            transition: var(--transition-smooth);
+        }
+
+        .explorer-item a:hover i {
+            color: var(--accent);
+        }
+
+        .explorer-item a:hover {
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        /* --- MIDDLE: MD CONTENT --- */
+        .content-area {
+            padding: 5rem 0 10rem 0;
+            /* Extra bottom padding so scroll reaches end cleanly */
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .md-content {
+            font-size: 1rem;
+            color: #b3b3b3;
+            transition: opacity 0.3s ease;
+        }
+
+        .md-content h1 {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .md-content .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .md-content .meta span {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .md-content h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-top: 3.5rem;
+            margin-bottom: 1rem;
+            scroll-margin-top: 5rem;
+            /* For smooth scrolling offset */
+        }
+
+        .md-content h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #d1d1d1;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            scroll-margin-top: 5rem;
+        }
+
+        .md-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .md-content a {
+            color: var(--text-primary);
+            text-decoration: none;
+            border-bottom: 1px solid #333;
+            transition: var(--transition-smooth);
+        }
+
+        .md-content a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        .md-content blockquote {
+            border-left: 2px solid var(--border-color);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .md-content pre {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 2rem 0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #d1d1d1;
+        }
+
+        .md-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+            filter: grayscale(100%);
+            transition: var(--transition-smooth);
+        }
+
+        .md-content img:hover {
+            filter: grayscale(0%);
+        }
+
+        .md-content hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 3rem 0;
+        }
+
+        /* --- TOC SCROLLABLE FIX --- */
+        .toc-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .toc-container::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .toc-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toc-container::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 10px;
+        }
+
+        /* --- CATEGORY ACCORDION --- */
+        .category-group {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .category-header {
+            display: grid;
+            grid-template-columns: 18px minmax(0, 1fr) 1.75rem;
+            align-items: center;
+            column-gap: 0.75rem;
+            padding: 0.18rem 0;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            font-family: var(--font-main);
+            text-align: left;
+        }
+
+        .category-header:hover {
+            color: var(--text-primary);
+        }
+
+        .category-header i {
+            font-size: 1rem;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #555;
+            transition: var(--transition-smooth);
+        }
+
+        .category-header:hover i {
+            color: var(--accent);
+        }
+
+        .category-header .cat-count {
+            font-size: 0.7rem;
+            color: #444;
+            width: 1.75rem;
+            text-align: right;
+            justify-self: end;
+            line-height: 1;
+        }
+
+        .category-title {
+            min-width: 0;
+            line-height: 1.25;
+        }
+
+        .category-posts {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            opacity: 0;
+        }
+
+        .category-group:hover .category-posts {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        /* Recent list one-line constraint */
+        #list-recent .explorer-item a {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            /* Overrides flex to allow ellipsis */
+            line-height: 1.4;
+        }
+
+        .category-posts ul {
+            list-style: none;
+            padding: 0.55rem 0 0.25rem 2rem;
+            overflow: hidden;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .category-posts ul li {
+            position: relative;
+            padding-left: 1rem;
+            margin-bottom: 0;
+            line-height: 1.45;
+        }
+
+        .category-posts ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #444;
+            font-size: 0.9rem;
+        }
+
+        .category-posts ul li a {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            line-height: 1.45;
+        }
+
+        .category-posts ul li a:hover {
+            color: var(--text-primary);
+            transform: translateX(3px);
+            display: inline-block;
+        }
+
+        /* --- RIGHT SIDEBAR SCROLLABLE --- */
+        .sidebar-right>div {
+            overflow-y: auto;
+            max-height: calc(100vh - 10rem);
+            padding-right: 0.5rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .graph-section {
+            margin-top: 2rem;
+        }
+
+        .knowledge-graph {
+            height: 240px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-surface);
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        @media (max-width: 1200px) {
+            .knowledge-graph {
+                height: 230px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .knowledge-graph {
+                height: 220px;
+            }
+        }
+
+        .sidebar-right>div::-webkit-scrollbar {
+            display: none;
+        }
+
+        .md-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .md-content li {
+            margin-bottom: 0.5rem;
+            color: #b3b3b3;
+        }
+
+        .md-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.85rem;
+        }
+
+        .md-content th,
+        .md-content td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        .md-content th {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .md-content td {
+            color: #b3b3b3;
+        }
+
+        .md-content code {
+            background: var(--bg-surface);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #d1d1d1;
+        }
+
+        .md-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Mermaid styling */
+        .mermaid {
+            display: block;
+            width: 100%;
+            margin: 2.25rem 0;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            overflow-x: auto;
+            transition: var(--transition-smooth);
+        }
+
+        .mermaid:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .mermaid svg {
+            display: block;
+            width: max(100%, 820px) !important;
+            height: auto !important;
+            margin: 0 auto;
+        }
+
+        .mermaid text,
+        .mermaid .messageText,
+        .mermaid .nodeLabel,
+        .mermaid .edgeLabel,
+        .mermaid .label {
+            font-size: 18px !important;
+        }
+
+        @media (max-width: 768px) {
+            .mermaid {
+                padding: 0.85rem;
+            }
+
+            .mermaid svg {
+                width: max(100%, 620px) !important;
+            }
+
+            .mermaid text,
+            .mermaid .messageText,
+            .mermaid .nodeLabel,
+            .mermaid .edgeLabel,
+            .mermaid .label {
+                font-size: 15px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- LEFT PANEL -->
+        <aside class="sidebar-left">
+            <div class="site-branding" style="position: fixed; left: 30px; top: 5rem; z-index: 50;">
+                <div
+                    style="font-size: 2.5rem; font-weight: 500; color: var(--text-primary); letter-spacing: -0.02em; line-height: 1.2;">
+                    ARKI</div>
+                <div
+                    style="font-style: italic; color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem; display: flex; gap: 1rem;">
+                    <a href="#" style="color: var(--text-primary); text-decoration: none;">blog</a>
+                    <a href="#"
+                        style="color: inherit; text-decoration: none; transition: var(--transition-smooth);">resume</a>
+                </div>
+            </div>
+
+            <div class="toc-wrapper">
+                <div class="section-title toc-title" id="toc-title">Contents</div>
+                <!-- TOC is injected here by JS -->
+                <nav class="toc-container" id="toc-container">
+                    <!-- Dynamic structure injected by JS -->
+                </nav>
+            </div>
+        </aside>
+
+        <!-- MIDDLE PANEL (CONTENT) -->
+        <main class="content-area">
+            <article class="md-content">
+                <h1>Professional Summary</h1>
+                <div class="meta">
+                    <span>Profile</span>
+                    <time>May 4, 2026</time>
+                </div>
+
+                <p>Dedicated and customer-focused IT professional with strong hands-on experience in system
+                    administration,
+                    network troubleshooting, and technical support. Proven ability to diagnose and resolve hardware,
+                    software,
+                    and connectivity issues across Windows, macOS, and Linux environments. Adept at leveraging
+                    foundational
+                    cybersecurity knowledge to ensure secure user access, mitigate risks, and maintain robust endpoint
+                    protection. Eager to apply excellent communication skills and technical problem-solving abilities to
+                    deliver
+                    exceptional end-user support as a Service Desk Analyst.</p>
+
+                <h2 id="contact">Contact</h2>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+                    <div>
+                        <div
+                            style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem;">
+                            Phone</div>
+                        <div style="color: var(--text-primary);">0448 003 172</div>
+                    </div>
+                    <div>
+                        <div
+                            style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem;">
+                            Email</div>
+                        <div style="border-bottom: 1px solid #333; display: inline-block;"><a
+                                href="mailto:arki.a.piercy@pm.me" style="border: none;">arki.a.piercy@pm.me</a></div>
+                    </div>
+                    <div>
+                        <div
+                            style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem;">
+                            Github</div>
+                        <div style="border-bottom: 1px solid #333; display: inline-block;"><a
+                                href="https://github.com/agxinoia" target="_blank" style="border: none;">agxinoia</a>
+                        </div>
+                    </div>
+                    <div>
+                        <div
+                            style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem;">
+                            Portfolio</div>
+                        <div style="border-bottom: 1px solid #333; display: inline-block;"><a
+                                href="https://agxinoia.github.io/blog" target="_blank"
+                                style="border: none;">agxinoia.github.io/blog</a></div>
+                    </div>
+                </div>
+
+                <h2 id="education">Designations & Education</h2>
+                <h3 id="cert-iv">Certificate IV in Information Technology (Cyber Security)</h3>
+                <p>North Metropolitan TAFE — 2025</p>
+
+                <h3 id="cert-iii">Certificate III in Cyber Security</h3>
+                <p>South Metropolitan TAFE — 2024</p>
+
+                <h3 id="kennedy">Kennedy Baptist College</h3>
+                <p>Graduated in 2024. Scored the highest grades for AIT for years 11–12.</p>
+            </article>
+        </main>
+
+        <!-- RIGHT PANEL -->
+        <aside class="sidebar-right">
+            <div>
+                <nav class="explorer-nav">
+                    <div class="explorer-tab active" data-target="categories">Categories</div>
+                    <div class="explorer-tab" data-target="recent">Recent</div>
+                </nav>
+
+                <div id="explorer-content">
+                    <!-- Categories accordion - generated by JS -->
+                    <div id="list-categories"></div>
+
+                    <ul class="explorer-list" id="list-recent" style="display: none;">
+                        <!-- Generated by JS -->
+                    </ul>
+                </div>
+
+                <div class="graph-section">
+                    <div class="section-title">Graph View</div>
+                    <div id="obsidian-graph" class="knowledge-graph"></div>
+                </div>
+            </div>
+        </aside>
+
+
+
+    </div>
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        let tocObserver = null;
+        let tocScrollListener = null;
+        let currentGraphFocusTitle = null;
+        const CONSOLE_WATERMARK = String.raw`::::    ::::      :::     :::::::::  ::::::::::      :::::::::  :::   :::      
++:+:+: :+:+:+   :+: :+:   :+:    :+: :+:             :+:    :+: :+:   :+:      
++:+ +:+:+ +:+  +:+   +:+  +:+    +:+ +:+             +:+    +:+  +:+ +:+       
++#+  +:+  +#+ +#++:++#++: +#+    +#+ +#++:++#        +#++:++#+    +#++:        
++#+       +#+ +#+     +#+ +#+    +#+ +#+             +#+    +#+    +#+         
+#+#       #+# #+#     #+# #+#    #+# #+#             #+#    #+#    #+#         
+###       ### ###     ### #########  ##########      #########     ###         
+    :::     :::::::::  :::    ::: :::::::::::                                  
+  :+: :+:   :+:    :+: :+:   :+:      :+:                                      
+ +:+   +:+  +:+    +:+ +:+  +:+       +:+                                      
+#+#+#+#+#+: +#++:++#:  +#++:++        +#+                                      
++#+     +#+ +#+    +#+ +#+  +#+       +#+                                      
+#+#     #+# #+#    #+# #+#   #+#      #+#                                      
+###     ### ###    ### ###    ### ###########                                  `;
+
+        console.log(`%c${CONSOLE_WATERMARK}`, 'color: #8f96a3; font-weight: 600;');
+
+        // Initialize mermaid for dark theme
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            themeVariables: {
+                fontSize: '18px'
+            }
+        });
+
+        /* =========================================
+           BLOG DATA REGISTRY
+           ========================================= */
+        const CATEGORIES = [
+            {
+                name: 'Homelab',
+                icon: 'fa-solid fa-server',
+                folder: 'Categories/Homelab',
+                posts: [
+                    { title: 'Proxmox Lab Setup', file: 'Proxmox.md', date: '2025-08-20', tags: [] },
+                    { title: 'Multi-OS Workflow', file: 'Operations systems.md', date: '2025-08-07', tags: [] }
+                ]
+            },
+            {
+                name: 'Threat Hunting',
+                icon: 'fa-solid fa-crosshairs',
+                folder: 'Categories/Threat Hunting ',
+                posts: []
+            },
+            {
+                name: 'Incident Response & Case Studies',
+                icon: 'fa-solid fa-fire-extinguisher',
+                folder: 'Categories/Incident Response & Case Studies',
+                posts: [
+                    { title: 'RevoFitness Zero-Day', file: 'final-report.md', date: '2026-05-01', tags: [] }
+                ]
+            },
+            {
+                name: 'Detection Engineering',
+                icon: 'fa-solid fa-shield-halved',
+                folder: 'Categories/Detection Engineering ',
+                posts: []
+            },
+            {
+                name: 'Log Analysis & Forensics',
+                icon: 'fa-solid fa-magnifying-glass-chart',
+                folder: 'Categories/Log Analysis & Forensics',
+                posts: []
+            },
+            {
+                name: 'Malware Analysis',
+                icon: 'fa-solid fa-bug',
+                folder: 'Categories/Malware Analysis',
+                posts: []
+            },
+            {
+                name: 'Tool Guides',
+                icon: 'fa-solid fa-toolbox',
+                folder: 'Categories/Tool Guides',
+                posts: [
+                    { title: 'AutoVirt Sandbox Setup', file: 'tools.md', date: '2026-05-04', tags: [] }
+                ]
+            },
+            {
+                name: 'Reverse Engineering',
+                icon: 'fa-solid fa-code-compare',
+                folder: 'Categories/Reverse Engineering',
+                posts: [
+                    { title: 'Reversing Key System', file: 'Reversing Key System.md', date: '2025-08-29', tags: [] }
+                ]
+            }
+        ];
+
+        function getPostPath(category, post) {
+            return `${category.folder}/${post.file}`;
+        }
+
+        function findPostByPath(path) {
+            for (const category of CATEGORIES) {
+                for (const post of category.posts) {
+                    if (getPostPath(category, post) === path) {
+                        return { category, post };
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        function cleanFrontmatterValue(value) {
+            const trimmed = value.trim();
+            if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+                return trimmed.slice(1, -1);
+            }
+            return trimmed;
+        }
+
+        function parseFrontmatter(text) {
+            const match = text.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n?([\s\S]*)$/);
+            if (!match) {
+                return {
+                    metadata: { title: null, date: null, tags: [] },
+                    body: text.trim()
+                };
+            }
+
+            const metadata = { title: null, date: null, tags: [] };
+            let activeList = null;
+
+            match[1].split(/\r?\n/).forEach((rawLine) => {
+                if (!rawLine.trim()) return;
+
+                const listMatch = rawLine.match(/^\s*-\s+(.*)$/);
+                if (listMatch && activeList === 'tags') {
+                    metadata.tags.push(cleanFrontmatterValue(listMatch[1]));
+                    return;
+                }
+
+                const keyMatch = rawLine.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+                if (!keyMatch) return;
+
+                const [, key, value] = keyMatch;
+                activeList = value.trim() === '' ? key : null;
+
+                if (key === 'title' && value.trim()) metadata.title = cleanFrontmatterValue(value);
+                if (key === 'date' && value.trim()) metadata.date = cleanFrontmatterValue(value);
+            });
+
+            return {
+                metadata,
+                body: match[2].trim()
+            };
+        }
+
+        async function hydratePostMetadata() {
+            const tasks = [];
+
+            CATEGORIES.forEach((category) => {
+                category.posts.forEach((post) => {
+                    const path = getPostPath(category, post);
+                    tasks.push(
+                        fetch(path)
+                            .then((response) => {
+                                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                                return response.text();
+                            })
+                            .then((text) => {
+                                const { metadata } = parseFrontmatter(text);
+                                if (metadata.title) post.title = metadata.title;
+                                if (metadata.date) post.date = metadata.date;
+                                post.tags = metadata.tags.length > 0 ? metadata.tags : (post.tags || []);
+                            })
+                            .catch((error) => {
+                                console.warn(`Failed to hydrate metadata for ${path}:`, error);
+                                post.tags = post.tags || [];
+                            })
+                    );
+                });
+            });
+
+            await Promise.all(tasks);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            initTOC();
+            initExplorer();
+            await hydratePostMetadata();
+            buildCategories();
+            buildRecent();
+            initGraph();
+        });
+
+        /* =========================================
+           1. LINE-STYLE TABLE OF CONTENTS
+           ========================================= */
+        function initTOC() {
+            const content = document.querySelector('.md-content');
+            const headings = content.querySelectorAll('h2, h3');
+            const tocContainer = document.getElementById('toc-container');
+
+            if (headings.length === 0) return;
+
+            headings.forEach((heading, index) => {
+                if (!heading.id) {
+                    heading.id = 'heading-' + index;
+                }
+
+                const link = document.createElement('a');
+                link.href = '#' + heading.id;
+                link.className = 'toc-item';
+
+                let textClass = heading.tagName.toLowerCase() === 'h3' ? 'toc-text h3-indent' : 'toc-text';
+
+                link.innerHTML = `
+                    <div class="toc-line"></div>
+                    <div class="${textClass}">${heading.innerText}</div>
+                `;
+
+                tocContainer.appendChild(link);
+
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    heading.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            const tocItems = document.querySelectorAll('.toc-item');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -60% 0px',
+                threshold: 0.1
+            };
+
+            if (tocObserver) {
+                tocObserver.disconnect();
+            }
+
+            let lastIntersectedId = null;
+            let isAtBottom = false;
+
+            tocObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        lastIntersectedId = entry.target.getAttribute('id');
+                        if (!isAtBottom) {
+                            tocItems.forEach(item => item.classList.remove('active'));
+                            const activeLink = document.querySelector(`.toc-item[href="#${lastIntersectedId}"]`);
+                            if (activeLink) activeLink.classList.add('active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            headings.forEach(heading => tocObserver.observe(heading));
+
+            if (tocScrollListener) {
+                window.removeEventListener('scroll', tocScrollListener);
+            }
+
+            tocScrollListener = () => {
+                // Check if user has scrolled to the bottom of the page
+                const atBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
+
+                if (atBottom && !isAtBottom) {
+                    isAtBottom = true;
+                    const lastHeading = headings[headings.length - 1];
+                    if (lastHeading) {
+                        tocItems.forEach(item => item.classList.remove('active'));
+                        const activeLink = document.querySelector(`.toc-item[href="#${lastHeading.id}"]`);
+                        if (activeLink) activeLink.classList.add('active');
+                    }
+                } else if (!atBottom && isAtBottom) {
+                    isAtBottom = false;
+                    if (lastIntersectedId) {
+                        tocItems.forEach(item => item.classList.remove('active'));
+                        const activeLink = document.querySelector(`.toc-item[href="#${lastIntersectedId}"]`);
+                        if (activeLink) activeLink.classList.add('active');
+                    }
+                }
+            };
+            window.addEventListener('scroll', tocScrollListener);
+        }
+
+        /* =========================================
+           2. BUILD CATEGORIES ACCORDION
+           ========================================= */
+        function buildCategories() {
+            const container = document.getElementById('list-categories');
+            container.innerHTML = '';
+
+            CATEGORIES.forEach(cat => {
+                const group = document.createElement('div');
+                group.className = 'category-group';
+
+                const header = document.createElement('button');
+                header.className = 'category-header';
+                header.innerHTML = `
+                    <i class="${cat.icon}"></i>
+                    <span class="category-title">${cat.name}</span>
+                    <span class="cat-count">(${cat.posts.length})</span>
+                `;
+
+                group.appendChild(header);
+
+                if (cat.posts.length > 0) {
+                    const postsDiv = document.createElement('div');
+                    postsDiv.className = 'category-posts';
+
+                    const ul = document.createElement('ul');
+                    cat.posts.forEach(post => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.textContent = post.title;
+                        a.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const filePath = getPostPath(cat, post);
+                            loadContent(post.title, cat.name, filePath);
+                        });
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    });
+
+                    postsDiv.appendChild(ul);
+                    group.appendChild(postsDiv);
+                }
+
+                container.appendChild(group);
+            });
+        }
+
+        /* =========================================
+           3. BUILD RECENT LIST
+           ========================================= */
+        function buildRecent() {
+            const list = document.getElementById('list-recent');
+            list.innerHTML = '';
+
+            // Gather all posts from all categories
+            const allPosts = [];
+            CATEGORIES.forEach(cat => {
+                cat.posts.forEach(post => {
+                    allPosts.push({
+                        title: post.title,
+                        file: getPostPath(cat, post),
+                        category: cat.name,
+                        date: post.date ? new Date(post.date) : new Date()
+                    });
+                });
+            });
+
+            // Sort by date descending
+            allPosts.sort((a, b) => b.date - a.date);
+
+            function timeAgo(date) {
+                // Use a simulated current date matching the blog timeline (May 4, 2026) for consistency, or standard current date
+                const now = new Date('2026-05-04T12:00:00Z');
+                let seconds = Math.floor((now - date) / 1000);
+                if (seconds < 0) seconds = 0; // handle future dates just in case
+
+                let interval = seconds / 31536000;
+                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " year ago" : " years ago");
+                interval = seconds / 2592000;
+                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " month ago" : " months ago");
+                interval = seconds / 86400;
+                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " day ago" : " days ago");
+                interval = seconds / 3600;
+                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " hour ago" : " hours ago");
+                interval = seconds / 60;
+                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " minute ago" : " minutes ago");
+                return "just now";
+            }
+
+            allPosts.forEach(post => {
+                const li = document.createElement('li');
+                li.className = 'explorer-item';
+                const a = document.createElement('a');
+                a.href = '#';
+
+                // Construct the link content cleanly for single line
+                a.innerHTML = `<span style="font-weight: 500;">${post.title}</span> <span style="font-size: 0.7rem; color: #555;">&middot; ${timeAgo(post.date)}</span>`;
+                // Add title attribute so full text is visible on hover
+                a.title = `${post.title} · ${timeAgo(post.date)}`;
+
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadContent(post.title, post.category, post.file);
+                });
+                li.appendChild(a);
+                list.appendChild(li);
+            });
+        }
+
+        /* =========================================
+           4. EXPLORER TABS (Categories / Recent)
+           ========================================= */
+        function initExplorer() {
+            const tabs = document.querySelectorAll('.explorer-tab');
+            const listCategories = document.getElementById('list-categories');
+            const listRecent = document.getElementById('list-recent');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const target = tab.getAttribute('data-target');
+
+                    listCategories.style.opacity = '0';
+                    listRecent.style.opacity = '0';
+
+                    setTimeout(() => {
+                        if (target === 'categories') {
+                            listCategories.style.display = 'block';
+                            listRecent.style.display = 'none';
+                            void listCategories.offsetWidth;
+                            listCategories.style.opacity = '1';
+                        } else {
+                            listCategories.style.display = 'none';
+                            listRecent.style.display = 'flex';
+                            void listRecent.offsetWidth;
+                            listRecent.style.opacity = '1';
+                        }
+                    }, 200);
+                });
+
+                listCategories.style.transition = 'opacity 0.2s ease';
+                listRecent.style.transition = 'opacity 0.2s ease';
+            });
+        }
+
+        /* =========================================
+           5. OBSIDIAN GRAPH (D3.js) — Real Data
+           ========================================= */
+        function initGraph() {
+            const container = document.getElementById('obsidian-graph');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const nodeMap = new Map();
+            const allLinks = [];
+            const postTagIds = new Map();
+
+            const addNode = (node) => {
+                if (!nodeMap.has(node.id)) {
+                    nodeMap.set(node.id, { ...node });
+                }
+                return nodeMap.get(node.id);
+            };
+
+            CATEGORIES.forEach((category) => {
+                addNode({ id: category.name, label: category.name, group: 'category', radius: 7 });
+
+                category.posts.forEach((post) => {
+                    const postPath = getPostPath(category, post);
+                    addNode({
+                        id: post.title,
+                        label: post.title,
+                        group: 'post',
+                        radius: 4.5,
+                        file: postPath,
+                        category: category.name
+                    });
+                    allLinks.push({ source: category.name, target: post.title, value: 1, kind: 'category-post' });
+
+                    const tagIds = [];
+                    (post.tags || []).forEach((tag) => {
+                        const tagId = `tag:${tag}`;
+                        tagIds.push(tagId);
+                        addNode({ id: tagId, label: tag, group: 'tag', radius: 3 });
+                        allLinks.push({ source: post.title, target: tagId, value: 0.35, kind: 'post-tag' });
+                    });
+                    postTagIds.set(post.title, tagIds);
+                });
+            });
+
+            [
+                ['Homelab', 'Tool Guides'],
+                ['Incident Response & Case Studies', 'Threat Hunting'],
+                ['Malware Analysis', 'Reverse Engineering'],
+                ['Detection Engineering', 'Log Analysis & Forensics'],
+                ['Threat Hunting', 'Detection Engineering']
+            ].forEach(([source, target]) => {
+                if (nodeMap.has(source) && nodeMap.has(target)) {
+                    allLinks.push({ source, target, value: 0.5, kind: 'category-category' });
+                }
+            });
+
+            const allNodes = Array.from(nodeMap.values());
+            const linkNodeId = (endpoint) => typeof endpoint === 'object' ? endpoint.id : endpoint;
+
+            const createGlobalTargets = (nodes) => {
+                const targets = new Map();
+                const categories = CATEGORIES.map((category) => category.name);
+                const graphColumns = 3;
+                const graphRows = Math.ceil(categories.length / graphColumns);
+                const horizontalPadding = 54;
+                const verticalPadding = 52;
+
+                categories.forEach((categoryName, index) => {
+                    const column = index % graphColumns;
+                    const row = Math.floor(index / graphColumns);
+                    const x = horizontalPadding + (column * (width - horizontalPadding * 2) / Math.max(graphColumns - 1, 1));
+                    const y = verticalPadding + (row * (height - verticalPadding * 2) / Math.max(graphRows - 1, 1));
+                    targets.set(categoryName, { x, y });
+                });
+
+                const hashLabel = (value) => [...value].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+                nodes.forEach((node) => {
+                    if (targets.has(node.id)) return;
+                    if (node.group === 'post') {
+                        const categoryTarget = targets.get(node.category) || { x: width / 2, y: height / 2 };
+                        const hash = hashLabel(node.id);
+                        const angle = ((hash % 240) - 120) * (Math.PI / 180);
+                        const radius = 44 + (hash % 24);
+                        targets.set(node.id, {
+                            x: categoryTarget.x + Math.cos(angle) * radius,
+                            y: categoryTarget.y - 58 + Math.sin(angle) * 28
+                        });
+                        return;
+                    }
+
+                    if (node.group === 'tag') {
+                        const attachedPostLink = allLinks.find((link) => link.kind === 'post-tag' && (link.source === node.id || link.target === node.id));
+                        const postId = attachedPostLink ? (attachedPostLink.source === node.id ? attachedPostLink.target : attachedPostLink.source) : null;
+                        const postNode = postId ? nodeMap.get(postId) : null;
+                        const postTarget = postNode ? (targets.get(postNode.id) || { x: width / 2, y: height / 2 }) : { x: width / 2, y: height / 2 };
+                        const hash = hashLabel(node.id);
+                        const angle = (hash % 360) * (Math.PI / 180);
+                        const radius = 42 + (hash % 16);
+                        targets.set(node.id, {
+                            x: postTarget.x + Math.cos(angle) * radius,
+                            y: postTarget.y + Math.sin(angle) * radius
+                        });
+                    }
+                });
+
+                return targets;
+            };
+
+            const createLocalGraphScope = (focusTitle) => {
+                if (!focusTitle || !nodeMap.has(focusTitle)) return null;
+
+                const focusNode = nodeMap.get(focusTitle);
+                if (focusNode.group !== 'post') return null;
+
+                const focusTagIds = postTagIds.get(focusTitle) || [];
+                const selectedIds = new Set([focusNode.id, focusNode.category, ...focusTagIds]);
+                const relatedPosts = [];
+
+                allNodes.forEach((node) => {
+                    if (node.group !== 'post' || node.id === focusNode.id) return;
+                    const sharedTags = (postTagIds.get(node.id) || []).filter((tagId) => focusTagIds.includes(tagId));
+                    if (node.category === focusNode.category || sharedTags.length > 0) {
+                        selectedIds.add(node.id);
+                        selectedIds.add(node.category);
+                        sharedTags.forEach((tagId) => selectedIds.add(tagId));
+                        relatedPosts.push(node.id);
+                    }
+                });
+
+                const nodes = allNodes
+                    .filter((node) => selectedIds.has(node.id))
+                    .map((node) => ({ ...node, isFocus: node.id === focusNode.id }));
+                const links = allLinks.filter((link) => selectedIds.has(link.source) && selectedIds.has(link.target) && link.kind !== 'category-category');
+                const targets = new Map();
+
+                const focusPoint = { x: width * 0.52, y: height * 0.56 };
+                targets.set(focusNode.id, focusPoint);
+                targets.set(focusNode.category, { x: width * 0.24, y: height * 0.32 });
+
+                const otherCategories = [...new Set(nodes.filter((node) => node.group === 'category' && node.id !== focusNode.category).map((node) => node.id))];
+                otherCategories.forEach((categoryId, index) => {
+                    targets.set(categoryId, { x: width * 0.24, y: height * (0.62 + index * 0.14) });
+                });
+
+                focusTagIds.forEach((tagId, index) => {
+                    const angle = focusTagIds.length === 1
+                        ? -Math.PI / 2
+                        : -Math.PI * 0.82 + (index / Math.max(focusTagIds.length - 1, 1)) * (Math.PI * 0.92);
+                    targets.set(tagId, {
+                        x: focusPoint.x + Math.cos(angle) * 132,
+                        y: focusPoint.y + Math.sin(angle) * 88
+                    });
+                });
+
+                relatedPosts.forEach((postId, index) => {
+                    const angle = relatedPosts.length === 1
+                        ? -0.2
+                        : -0.65 + (index / Math.max(relatedPosts.length - 1, 1)) * 1.3;
+                    const postPoint = {
+                        x: focusPoint.x + Math.cos(angle) * 182,
+                        y: focusPoint.y + Math.sin(angle) * 118
+                    };
+                    targets.set(postId, postPoint);
+
+                    (postTagIds.get(postId) || [])
+                        .filter((tagId) => selectedIds.has(tagId) && !targets.has(tagId))
+                        .forEach((tagId, tagIndex) => {
+                            const offsetAngle = angle + (-0.42 + tagIndex * 0.42);
+                            targets.set(tagId, {
+                                x: postPoint.x + Math.cos(offsetAngle) * 64,
+                                y: postPoint.y + Math.sin(offsetAngle) * 46
+                            });
+                        });
+                });
+
+                nodes
+                    .filter((node) => node.group === 'tag' && !targets.has(node.id))
+                    .forEach((node, index) => {
+                        targets.set(node.id, { x: width * 0.74, y: height * 0.2 + index * 34 });
+                    });
+
+                return { nodes, links, targets, focusId: focusNode.id, mode: 'local' };
+            };
+
+            const scopedGraph = createLocalGraphScope(currentGraphFocusTitle);
+            const nodes = (scopedGraph?.nodes || allNodes).map((node) => ({
+                ...node,
+                isFocus: scopedGraph?.focusId === node.id
+            }));
+            const links = scopedGraph?.links || allLinks;
+            const targetMap = scopedGraph?.targets || createGlobalTargets(nodes);
+            const labelVisibility = new Map(
+                nodes.map((node) => [node.id, node.group === 'tag' ? (scopedGraph ? 0.35 : 0) : 1])
+            );
+
+            const targetForNode = (node) => targetMap.get(node.id) || { x: width / 2, y: height / 2 };
+            const baseNodeFill = (node) => {
+                if (node.isFocus) return '#ffffff';
+                if (node.group === 'category') return '#d9d9d9';
+                if (node.group === 'tag') return '#2f2f2f';
+                return '#6b6b6b';
+            };
+            const baseLinkStroke = (linkItem) => linkItem.kind === 'category-category'
+                ? "rgba(255, 255, 255, 0.05)"
+                : linkItem.value > 0.5
+                    ? "rgba(255, 255, 255, 0.10)"
+                    : "rgba(255, 255, 255, 0.05)";
+            const getConnectedNodeIds = (nodeId) => {
+                const connected = new Set([nodeId]);
+                links.forEach((linkItem) => {
+                    const sourceId = linkNodeId(linkItem.source);
+                    const targetId = linkNodeId(linkItem.target);
+                    if (sourceId === nodeId || targetId === nodeId) {
+                        connected.add(sourceId);
+                        connected.add(targetId);
+                    }
+                });
+                return connected;
+            };
+
+            const zoom = d3.zoom().scaleExtent([0.6, 4]).on("zoom", (event) => {
+                g.attr("transform", event.transform);
+            });
+
+            const svg = d3.select("#obsidian-graph")
+                .append("svg")
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .call(zoom);
+
+            const g = svg.append("g");
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance((d) => scopedGraph ? (d.kind === 'category-post' ? 118 : 82) : (d.value > 0.5 ? 62 : 42)))
+                .force("charge", d3.forceManyBody().strength(scopedGraph ? -220 : -165))
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("x", d3.forceX((d) => targetForNode(d).x).strength(scopedGraph ? 0.55 : 0.42))
+                .force("y", d3.forceY((d) => targetForNode(d).y).strength(scopedGraph ? 0.55 : 0.42))
+                .force("collide", d3.forceCollide().radius((d) => d.group === 'tag' ? d.radius + 14 : d.radius + (scopedGraph ? 22 : 18)));
+
+            const link = g.append("g")
+                .attr("stroke-opacity", 0.6)
+                .selectAll("line")
+                .data(links)
+                .join("line")
+                .attr("stroke", d => baseLinkStroke(d))
+                .attr("stroke-width", d => d.value > 0.5 ? 1.5 : 0.9);
+
+            const node = g.append("g")
+                .attr("stroke", "#0a0a0a")
+                .attr("stroke-width", 1.5)
+                .selectAll("circle")
+                .data(nodes)
+                .join("circle")
+                .attr("r", d => d.isFocus ? d.radius + 2.8 : d.radius)
+                .attr("fill", d => baseNodeFill(d))
+                .style("cursor", d => d.file ? "pointer" : "default")
+                .call(drag(simulation));
+
+            const label = g.append("g")
+                .selectAll("text")
+                .data(nodes)
+                .join("text")
+                .attr("dy", -10)
+                .attr("dx", 0)
+                .attr("text-anchor", "middle")
+                .text(d => {
+                    const text = d.label || d.id;
+                    return text.length > 20 ? text.substring(0, 18) + '…' : text;
+                })
+                .style("font-size", d => d.isFocus ? "8.5px" : d.group === 'category' ? "9px" : d.group === 'tag' ? "6px" : "7px")
+                .style("fill", "var(--text-muted)")
+                .style("opacity", d => labelVisibility.get(d.id) ?? 1)
+                .style("pointer-events", "none")
+                .style("font-family", "var(--font-main)");
+
+            const renderGraph = () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+
+                label
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            };
+
+            node.on("mouseover", function (event, d) {
+                const connectedNodeIds = getConnectedNodeIds(d.id);
+                node
+                    .attr("fill", n => connectedNodeIds.has(n.id) ? "var(--accent)" : baseNodeFill(n))
+                    .attr("opacity", n => connectedNodeIds.has(n.id) ? 1 : 0.22)
+                    .attr("r", n => n.id === d.id ? n.radius + 2.6 : n.isFocus ? n.radius + 2.8 : n.radius);
+                label
+                    .style("fill", l => connectedNodeIds.has(l.id) ? "var(--text-primary)" : "var(--text-muted)")
+                    .style("font-weight", l => l.id === d.id ? "500" : "normal")
+                    .style("opacity", l => {
+                        if (l.group === 'tag') return connectedNodeIds.has(l.id) ? 1 : 0;
+                        return connectedNodeIds.has(l.id) ? 1 : 0.28;
+                    });
+                link
+                    .attr("stroke", l => {
+                        const sourceId = linkNodeId(l.source);
+                        const targetId = linkNodeId(l.target);
+                        return connectedNodeIds.has(sourceId) && connectedNodeIds.has(targetId)
+                            ? "rgba(255, 255, 255, 0.45)"
+                            : "rgba(255, 255, 255, 0.03)";
+                    })
+                    .attr("stroke-opacity", l => {
+                        const sourceId = linkNodeId(l.source);
+                        const targetId = linkNodeId(l.target);
+                        return connectedNodeIds.has(sourceId) && connectedNodeIds.has(targetId) ? 0.9 : 0.35;
+                    });
+            }).on("mouseout", function (event, d) {
+                node
+                    .attr("fill", n => baseNodeFill(n))
+                    .attr("opacity", 1)
+                    .attr("r", n => n.isFocus ? n.radius + 2.8 : n.radius);
+                label
+                    .style("fill", "var(--text-muted)")
+                    .style("font-weight", "normal")
+                    .style("opacity", l => labelVisibility.get(l.id) ?? 1);
+                link
+                    .attr("stroke", l => baseLinkStroke(l))
+                    .attr("stroke-opacity", 0.6);
+            }).on("click", function (event, d) {
+                if (d.file) {
+                    loadContent(d.id, d.category, d.file);
+                }
+            });
+
+            simulation.stop();
+            for (let i = 0; i < (scopedGraph ? 180 : 260); i += 1) simulation.tick();
+            renderGraph();
+            svg.call(zoom.transform, d3.zoomIdentity);
+            simulation.on("tick", renderGraph);
+
+            function drag(simulation) {
+                function dragstarted(event) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    event.subject.fx = event.subject.x;
+                    event.subject.fy = event.subject.y;
+                }
+                function dragged(event) {
+                    event.subject.fx = event.x;
+                    event.subject.fy = event.y;
+                }
+                function dragended(event) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    event.subject.fx = null;
+                    event.subject.fy = null;
+                }
+                return d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended);
+            }
+        }
+
+        /* =========================================
+           6. LOAD CONTENT (Fetch MD → Render)
+           ========================================= */
+        async function loadContent(title, type, filename = null) {
+            const article = document.querySelector('.md-content');
+            let resolvedTitle = title;
+            let resolvedDate = null;
+            const matchedPost = filename ? findPostByPath(filename) : null;
+
+            let fetchedContent = null;
+            if (filename) {
+                try {
+                    const response = await fetch(filename);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const text = await response.text();
+                    const { metadata, body } = parseFrontmatter(text);
+                    if (metadata.title) resolvedTitle = metadata.title;
+                    if (metadata.date) resolvedDate = metadata.date;
+                    fetchedContent = marked.parse(body);
+                } catch (error) {
+                    fetchedContent = `<p style="color: #ff5555;">Error loading content: ${error.message}</p>
+                    <p><em>Note: If you are opening this file directly (file:// protocol), your browser may block fetching local files due to CORS policy. Please serve this directory using a local web server (e.g., <code>python3 -m http.server</code>).</em></p>`;
+                }
+            }
+
+            // Fade out
+            article.style.opacity = 0;
+
+            // Update document title
+            document.title = `${resolvedTitle} - Arki`;
+
+            currentGraphFocusTitle = matchedPost ? resolvedTitle : null;
+            initGraph();
+
+            setTimeout(() => {
+                let bodyContent = fetchedContent;
+
+                if (!bodyContent) {
+                    bodyContent = `
+                        <p>This is a dynamically loaded section for <strong>${resolvedTitle}</strong>. In a fully built application, this would fetch markdown content from a backend or static site generator.</p>
+                    <h2 id="overview">Overview</h2>
+                    <p>Content related to ${resolvedTitle} goes here. It seamlessly maintains the minimalist architectural design and typography scale.</p>
+                    <h3 id="details">Details</h3>
+                    <p>More detailed information, code snippets, and resources would be listed under these subheadings to provide value to the reader.</p>
+                    <blockquote>"Simulated content loaded dynamically via JavaScript, proving the resilience of the layout."</blockquote>
+                    <h2 id="related">Related References</h2>
+                    <p>Explore other nodes in the knowledge graph to dive deeper into this subject.</p>
+                `;
+
+                    if (title === 'Architectural Minimalism in Web Design') {
+                        // Fallback removed, content now loaded from file
+                    } else if (title === 'Resume / CV') {
+                        bodyContent = `
+                        <p>Dedicated and customer-focused IT professional with strong hands-on experience in system administration,
+                        network troubleshooting, and technical support. Adept at leveraging foundational cybersecurity knowledge 
+                        to ensure secure user access and mitigate risks.</p>
+                        
+                        <h2 id="contact-info">Contact Information</h2>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li><strong>Phone:</strong> 0448 003 172</li>
+                            <li><strong>Email:</strong> arki.a.piercy@pm.me</li>
+                            <li><strong>Repo:</strong> <a href="https://github.com/agxinoia" target="_blank">github.com/agxinoia</a></li>
+                        </ul>
+
+                        <h2 id="edu-designations">Education & Designations</h2>
+                        <h3 id="tafe-2025">Cert IV in IT (Cyber Security)</h3>
+                        <p>North Metropolitan TAFE — 2025</p>
+                        <h3 id="tafe-2024">Cert III in Cyber Security</h3>
+                        <p>South Metropolitan TAFE — 2024</p>
+                        <h3 id="kennedy-2024">Kennedy Baptist College</h3>
+                        <p>Graduated in 2024 with highest grades in AIT.</p>
+                    `;
+                    }
+                }
+
+                article.innerHTML = `
+                    <h1>${resolvedTitle}</h1>
+                    <div class="meta">
+                        <span>${type}</span>
+                        <time>${resolvedDate ? new Date(resolvedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
+                    </div>
+                    ${bodyContent}
+                `;
+
+                // Fade in
+                article.style.opacity = 1;
+
+                // Clear existing TOC
+                const tocContainer = document.getElementById('toc-container');
+                tocContainer.innerHTML = '';
+
+                // Reinitialize TOC
+                initTOC();
+
+                // Convert mermaid code blocks into divs
+                const mermaidBlocks = article.querySelectorAll('code.language-mermaid');
+                if (mermaidBlocks.length > 0) {
+                    mermaidBlocks.forEach((block, index) => {
+                        const pre = block.parentElement;
+                        const div = document.createElement('div');
+                        div.className = 'mermaid';
+                        div.id = `mermaid-${Date.now()}-${index}`;
+                        div.textContent = block.textContent;
+                        pre.replaceWith(div);
+                    });
+
+                    // Render mermaid diagrams
+                    mermaid.run({
+                        querySelector: '.mermaid'
+                    }).catch(e => console.error("Mermaid parsing error", e));
+                }
+
+                // Scroll up
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300);
+        }
+
+        /* =========================================
+           7. BRANDING NAV
+           ========================================= */
+        document.querySelectorAll('.site-branding a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const title = e.currentTarget.textContent.trim().toUpperCase();
+                if (title === 'BLOG') {
+                    loadContent('RevoFitness Zero-Day', 'Incident Response & Case Studies', 'Categories/Incident Response & Case Studies/final-report.md');
+                } else if (title === 'RESUME') {
+                    loadContent('Resume / CV', 'Profile');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
