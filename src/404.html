@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found — Arki</title>
+    <script>
+        // GitHub Pages SPA redirect trick:
+        // Capture the current path and forward everything to the root index.html
+        // via the URL redirect feature (?post= query param).
+        (function () {
+            var path   = window.location.pathname;   // e.g. /blog/some-post
+            var search = window.location.search;
+            var hash   = window.location.hash;
+
+            // If path contains something after the base (e.g. /blog/some-post),
+            // try to use it as a post slug
+            var segments = path.replace(/^\//, '').replace(/\/$/, '').split('/');
+            // Strip leading 'blog' segment if present
+            if (segments[0] === 'blog') segments.shift();
+            var slug = segments.join('/');
+
+            var target = '/';
+            if (slug) {
+                target = '/?post=' + encodeURIComponent(slug) + hash;
+            } else if (search || hash) {
+                target = '/' + search + hash;
+            }
+
+            window.location.replace(target);
+        })();
+    </script>
+    <style>
+        body { background:#050505; color:#737373; font-family:Inter,sans-serif;
+               display:flex; align-items:center; justify-content:center;
+               min-height:100vh; margin:0; font-size:.9rem; }
+    </style>
+</head>
+<body>
+    Redirecting… <a href="/" style="color:#ededed;margin-left:.5rem;">back to home</a>
+</body>
+</html>

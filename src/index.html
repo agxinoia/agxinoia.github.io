@@ -2067,9 +2067,95 @@
                     }).catch(e => console.error("Mermaid parsing error", e));
                 }
 
+                // Hydrate data-viz placeholders (SVG built via DOM to bypass marked.js mangling)
+                article.querySelectorAll('[data-viz]').forEach(placeholder => {
+                    const vizType = placeholder.getAttribute('data-viz');
+                    if (vizType === 'exploit-timeline') {
+                        placeholder.replaceWith(buildExploitTimelineSVG());
+                    }
+                });
+
                 // Scroll up
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 300);
+        }
+
+        /* Build the exploit escalation timeline as a proper DOM SVG element */
+        function buildExploitTimelineSVG() {
+            const NS = 'http://www.w3.org/2000/svg';
+            const svg = document.createElementNS(NS, 'svg');
+            svg.setAttribute('viewBox', '0 0 580 200');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('role', 'img');
+            svg.setAttribute('aria-label', 'Exploit escalation timeline');
+            svg.style.cssText = 'display:block;margin:2.25rem 0;border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.02);overflow:visible;';
+
+            const mk = (tag, attrs = {}) => {
+                const el = document.createElementNS(NS, tag);
+                Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+                return el;
+            };
+
+            const steps = [
+                { x: 80,  label: 'Recon',     sub: 'Traffic Proxying',  above: true,  danger: false },
+                { x: 185, label: 'Discovery',  sub: 'Serialized Cookie', above: false, danger: false },
+                { x: 295, label: 'IDOR',       sub: 'Account Takeover',  above: true,  danger: false },
+                { x: 400, label: 'SQLi',        sub: 'Database Access',   above: false, danger: true  },
+                { x: 500, label: 'Disclosure',  sub: 'Source Exposed',    above: true,  danger: false },
+            ];
+
+            // Background rect
+            svg.appendChild(mk('rect', { x:0, y:0, width:580, height:200, fill:'#0a0a0a', rx:12 }));
+
+            // Spine arrow (defs + marker)
+            const defs = mk('defs');
+            const marker = mk('marker', { id:'tl-arrow', markerWidth:7, markerHeight:7, refX:6, refY:3.5, orient:'auto' });
+            const arrowPath = mk('path', { d:'M0,0 L0,7 L7,3.5 z', fill:'rgba(255,255,255,0.15)' });
+            marker.appendChild(arrowPath);
+            defs.appendChild(marker);
+            svg.appendChild(defs);
+
+            svg.appendChild(mk('line', {
+                x1:50, y1:100, x2:544, y2:100,
+                stroke:'rgba(255,255,255,0.1)', 'stroke-width':2,
+                'marker-end':'url(#tl-arrow)'
+            }));
+
+            steps.forEach(({ x, label, sub, above, danger }) => {
+                const tickY2 = above ? 68 : 132;
+                const labelY = above ? 58  : 152;
+                const subY   = above ? 132 : 60;
+
+                // Dashed tick
+                svg.appendChild(mk('line', {
+                    x1:x, y1:100, x2:x, y2:tickY2,
+                    stroke:'rgba(255,255,255,0.09)', 'stroke-width':1.5, 'stroke-dasharray':'4 3'
+                }));
+
+                // Node circle
+                const r = danger ? 7 : 5;
+                const fill = danger ? '#ef4444' : '#ededed';
+                svg.appendChild(mk('circle', { cx:x, cy:100, r, fill }));
+
+                // Glow ring for danger
+                if (danger) {
+                    svg.appendChild(mk('circle', { cx:x, cy:100, r:12, fill:'none', stroke:'#ef4444', 'stroke-width':1, opacity:0.3 }));
+                }
+
+                // Label text
+                const labelEl = mk('text', { x, y:labelY, 'text-anchor':'middle' });
+                labelEl.style.cssText = `fill:${danger ? '#ef4444' : '#ededed'};font:500 11.5px Inter,sans-serif;`;
+                labelEl.textContent = label;
+                svg.appendChild(labelEl);
+
+                // Sub text
+                const subEl = mk('text', { x, y:subY, 'text-anchor':'middle' });
+                subEl.style.cssText = 'fill:#555;font:10px Inter,sans-serif;';
+                subEl.textContent = sub;
+                svg.appendChild(subEl);
+            });
+
+            return svg;
         }
 
         /* =========================================
