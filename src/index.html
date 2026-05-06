@@ -73,7 +73,254 @@
             }
         }
 
-        @media (max-width: 992px) {
+        /* ============================
+           MOBILE LAYOUT (≤ 900px)
+           ============================ */
+        @media (max-width: 900px) {
+            .app-container {
+                display: block;
+                padding: 0;
+            }
+
+            /* Hide desktop sidebars entirely — replaced by mobile UI */
+            .sidebar-left,
+            .sidebar-right {
+                display: none !important;
+            }
+
+            .content-area {
+                padding: 5rem 1.25rem 6rem 1.25rem;
+            }
+        }
+
+        /* --- MOBILE HEADER --- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            height: 56px;
+            background: rgba(5, 5, 5, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.25rem;
+        }
+
+        .mobile-header-brand {
+            font-size: 1.35rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .mobile-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.05rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: var(--transition-smooth);
+        }
+
+        .mobile-icon-btn:hover,
+        .mobile-icon-btn.active {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* --- MOBILE DRAWER (Explorer panel) --- */
+        .mobile-drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 300;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-drawer-overlay.open {
+            opacity: 1;
+        }
+
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(320px, 88vw);
+            background: #0d0d0d;
+            border-left: 1px solid var(--border-color);
+            z-index: 301;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1.25rem;
+            overflow-y: auto;
+        }
+
+        .mobile-drawer.open {
+            transform: translateX(0);
+        }
+
+        .mobile-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .mobile-drawer-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .mobile-drawer-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-drawer-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* --- MOBILE FLOATING TOC BUTTON --- */
+        .mobile-toc-btn {
+            display: none;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.25rem;
+            z-index: 150;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 0.6rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-family: var(--font-main);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: var(--transition-smooth);
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .mobile-toc-btn:hover {
+            color: var(--text-primary);
+            border-color: rgba(255,255,255,0.22);
+        }
+
+        /* --- MOBILE TOC SHEET --- */
+        .mobile-toc-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 400;
+            background: #0d0d0d;
+            border-top: 1px solid var(--border-color);
+            border-radius: 20px 20px 0 0;
+            padding: 1rem 1.5rem 2rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-toc-sheet.open {
+            transform: translateY(0);
+        }
+
+        .mobile-toc-sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin: 0 auto 1.25rem;
+        }
+
+        .mobile-toc-sheet .mobile-toc-heading-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .mobile-toc-link {
+            display: block;
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-bottom: 1px solid var(--border-color);
+            transition: color 0.2s;
+        }
+
+        .mobile-toc-link:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-toc-link.h3-indent {
+            padding-left: 1rem;
+            font-size: 0.82rem;
+        }
+
+        .mobile-toc-link:hover,
+        .mobile-toc-link.active {
+            color: var(--text-primary);
+        }
+
+        .mobile-sheet-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 399;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-header {
+                display: flex;
+            }
+
+            .mobile-toc-btn {
+                display: flex;
+            }
+        }
+
+        /* Legacy ≤992 (tablet) — compact but still show sidebar structure */
+        @media (max-width: 992px) and (min-width: 901px) {
             .app-container {
                 grid-template-columns: 1fr;
                 gap: 3rem;
@@ -88,7 +335,6 @@
                 padding: 2rem 0 !important;
             }
 
-            /* Reset TOC on mobile to stay above content */
             .toc-wrapper {
                 position: relative !important;
                 left: 0 !important;
@@ -737,6 +983,51 @@
 
 <body>
 
+    <!-- MOBILE HEADER -->
+    <header class="mobile-header" id="mobile-header">
+        <a href="#" class="mobile-header-brand" id="mobile-brand-link">ARKI</a>
+        <div class="mobile-header-actions">
+            <button class="mobile-icon-btn" id="mobile-menu-btn" aria-label="Open menu" title="Browse Posts">
+                <i class="fa-solid fa-layer-group"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MOBILE DRAWER OVERLAY -->
+    <div class="mobile-drawer-overlay" id="mobile-drawer-overlay"></div>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer" id="mobile-drawer" role="dialog" aria-label="Post Explorer">
+        <div class="mobile-drawer-header">
+            <span class="mobile-drawer-title">Explorer</span>
+            <button class="mobile-drawer-close" id="mobile-drawer-close" aria-label="Close menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <!-- Explorer content cloned into drawer by JS -->
+        <nav class="explorer-nav" id="mobile-explorer-nav">
+            <div class="explorer-tab active" data-target="categories" data-mobile="true">Categories</div>
+            <div class="explorer-tab" data-target="recent" data-mobile="true">Recent</div>
+        </nav>
+        <div id="mobile-list-categories" style="margin-top: 1rem;"></div>
+        <ul class="explorer-list" id="mobile-list-recent" style="display: none; margin-top: 1rem;"></ul>
+    </div>
+
+    <!-- MOBILE TOC FLOATING BUTTON -->
+    <button class="mobile-toc-btn" id="mobile-toc-btn" aria-label="Table of Contents">
+        <i class="fa-solid fa-list"></i> Contents
+    </button>
+
+    <!-- MOBILE TOC SHEET OVERLAY -->
+    <div class="mobile-sheet-overlay" id="mobile-sheet-overlay"></div>
+
+    <!-- MOBILE TOC SHEET -->
+    <div class="mobile-toc-sheet" id="mobile-toc-sheet" role="dialog" aria-label="Table of Contents">
+        <div class="mobile-toc-sheet-handle"></div>
+        <div class="mobile-toc-heading-title">Contents</div>
+        <nav id="mobile-toc-container"></nav>
+    </div>
+
     <div class="app-container">
 
         <!-- LEFT PANEL -->
@@ -1046,10 +1337,14 @@
         document.addEventListener('DOMContentLoaded', async () => {
             initTOC();
             initExplorer();
+            initMobileUI();
             await hydratePostMetadata();
             buildCategories();
             buildRecent();
+            buildMobileCategories();
+            buildMobileRecent();
             initGraph();
+            handleURLRedirect();
         });
 
         /* =========================================
@@ -1791,6 +2086,286 @@
                 }
             });
         });
+
+        /* =========================================
+           8. MOBILE UI
+           ========================================= */
+        function initMobileUI() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('mobile-drawer-overlay');
+            const closeBtn = document.getElementById('mobile-drawer-close');
+            const brandLink = document.getElementById('mobile-brand-link');
+            const tocBtn = document.getElementById('mobile-toc-btn');
+            const tocSheet = document.getElementById('mobile-toc-sheet');
+            const sheetOverlay = document.getElementById('mobile-sheet-overlay');
+
+            function openDrawer() {
+                overlay.style.display = 'block';
+                drawer.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    overlay.classList.add('open');
+                    drawer.classList.add('open');
+                });
+                menuBtn.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDrawer() {
+                overlay.classList.remove('open');
+                drawer.classList.remove('open');
+                menuBtn.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    drawer.style.display = 'none';
+                }, 400);
+            }
+
+            function openTocSheet() {
+                buildMobileTOC();
+                sheetOverlay.style.display = 'block';
+                tocSheet.style.display = 'block';
+                requestAnimationFrame(() => {
+                    tocSheet.classList.add('open');
+                });
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeTocSheet() {
+                tocSheet.classList.remove('open');
+                document.body.style.overflow = '';
+                setTimeout(() => {
+                    sheetOverlay.style.display = 'none';
+                    tocSheet.style.display = 'none';
+                }, 400);
+            }
+
+            menuBtn.addEventListener('click', openDrawer);
+            overlay.addEventListener('click', closeDrawer);
+            closeBtn.addEventListener('click', closeDrawer);
+            tocBtn.addEventListener('click', openTocSheet);
+            sheetOverlay.addEventListener('click', closeTocSheet);
+
+            brandLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadContent('Professional Summary', 'Profile');
+            });
+
+            // Mobile explorer tabs
+            const mobileTabs = document.querySelectorAll('#mobile-explorer-nav .explorer-tab');
+            const mobileListCategories = document.getElementById('mobile-list-categories');
+            const mobileListRecent = document.getElementById('mobile-list-recent');
+
+            mobileTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    mobileTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const target = tab.getAttribute('data-target');
+                    if (target === 'categories') {
+                        mobileListCategories.style.display = 'block';
+                        mobileListRecent.style.display = 'none';
+                    } else {
+                        mobileListCategories.style.display = 'none';
+                        mobileListRecent.style.display = 'flex';
+                    }
+                });
+            });
+
+            // Initialize drawer as hidden
+            overlay.style.display = 'none';
+            drawer.style.display = 'none';
+            tocSheet.style.display = 'none';
+            sheetOverlay.style.display = 'none';
+        }
+
+        function buildMobileCategories() {
+            const container = document.getElementById('mobile-list-categories');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Clone the desktop categories logic but for mobile
+            CATEGORIES.forEach(cat => {
+                const group = document.createElement('div');
+                group.className = 'category-group';
+
+                const header = document.createElement('button');
+                header.className = 'category-header';
+                header.innerHTML = `
+                    <i class="${cat.icon}"></i>
+                    <span class="category-title">${cat.name}</span>
+                    <span class="cat-count">(${cat.posts.length})</span>
+                `;
+                group.appendChild(header);
+
+                if (cat.posts.length > 0) {
+                    const postsDiv = document.createElement('div');
+                    postsDiv.className = 'category-posts';
+
+                    const ul = document.createElement('ul');
+                    cat.posts.forEach(post => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.textContent = post.title;
+                        a.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const filePath = getPostPath(cat, post);
+                            loadContent(post.title, cat.name, filePath);
+                            // Close the drawer after selection
+                            const drawer = document.getElementById('mobile-drawer');
+                            const overlay = document.getElementById('mobile-drawer-overlay');
+                            if (drawer.classList.contains('open')) {
+                                overlay.classList.remove('open');
+                                drawer.classList.remove('open');
+                                document.body.style.overflow = '';
+                                setTimeout(() => {
+                                    overlay.style.display = 'none';
+                                    drawer.style.display = 'none';
+                                }, 400);
+                            }
+                        });
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    });
+
+                    postsDiv.appendChild(ul);
+                    group.appendChild(postsDiv);
+                }
+                container.appendChild(group);
+            });
+        }
+
+        function buildMobileRecent() {
+            const list = document.getElementById('mobile-list-recent');
+            if (!list) return;
+            list.innerHTML = '';
+
+            const allPosts = [];
+            CATEGORIES.forEach(cat => {
+                cat.posts.forEach(post => {
+                    allPosts.push({
+                        title: post.title,
+                        file: getPostPath(cat, post),
+                        category: cat.name,
+                        date: post.date ? new Date(post.date) : new Date()
+                    });
+                });
+            });
+            allPosts.sort((a, b) => b.date - a.date);
+
+            allPosts.forEach(post => {
+                const li = document.createElement('li');
+                li.className = 'explorer-item';
+                const a = document.createElement('a');
+                a.href = '#';
+                a.innerHTML = `<span style="font-weight:500;">${post.title}</span>`;
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadContent(post.title, post.category, post.file);
+                    const drawer = document.getElementById('mobile-drawer');
+                    const overlay = document.getElementById('mobile-drawer-overlay');
+                    if (drawer.classList.contains('open')) {
+                        overlay.classList.remove('open');
+                        drawer.classList.remove('open');
+                        document.body.style.overflow = '';
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                            drawer.style.display = 'none';
+                        }, 400);
+                    }
+                });
+                li.appendChild(a);
+                list.appendChild(li);
+            });
+        }
+
+        function buildMobileTOC() {
+            const container = document.getElementById('mobile-toc-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const headings = document.querySelector('.md-content').querySelectorAll('h2, h3');
+            if (headings.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No headings in this post.</p>';
+                return;
+            }
+
+            headings.forEach(heading => {
+                const a = document.createElement('a');
+                a.href = '#' + heading.id;
+                a.className = 'mobile-toc-link' + (heading.tagName === 'H3' ? ' h3-indent' : '');
+                a.textContent = heading.innerText;
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    heading.scrollIntoView({ behavior: 'smooth' });
+                    // Close the sheet
+                    document.getElementById('mobile-toc-sheet').classList.remove('open');
+                    document.body.style.overflow = '';
+                    setTimeout(() => {
+                        document.getElementById('mobile-sheet-overlay').style.display = 'none';
+                        document.getElementById('mobile-toc-sheet').style.display = 'none';
+                    }, 400);
+                });
+                container.appendChild(a);
+            });
+        }
+
+        /* =========================================
+           9. URL REDIRECT — legacy /blog links
+           =========================================
+           Supports:
+             ?post=Categories/Homelab/Proxmox.md        (file path)
+             ?post=proxmox-lab-setup                    (slug match)
+             #post=Categories/Homelab/Proxmox.md        (hash variant)
+             #Categories/Homelab/Proxmox.md             (bare hash path)
+           ========================================= */
+        function handleURLRedirect() {
+            const params = new URLSearchParams(window.location.search);
+            let postParam = params.get('post');
+
+            // Also check hash fragment variants: #post=... or bare #Categories/...
+            if (!postParam && window.location.hash) {
+                const hash = window.location.hash.slice(1);
+                if (hash.startsWith('post=')) {
+                    postParam = decodeURIComponent(hash.slice(5));
+                } else if (hash.includes('/')) {
+                    // Bare hash path like #Categories/Homelab/Proxmox.md
+                    postParam = decodeURIComponent(hash);
+                }
+            }
+
+            if (!postParam) return;
+
+            // Try exact file path match first
+            let found = findPostByPath(postParam);
+
+            // Try slug match (kebab-case title → post title)
+            if (!found) {
+                const slugToTitle = (s) => s.replace(/-/g, ' ').toLowerCase();
+                const slug = slugToTitle(postParam);
+                for (const cat of CATEGORIES) {
+                    for (const post of cat.posts) {
+                        if (post.title.toLowerCase() === slug ||
+                            post.file.replace(/\.md$/i, '').split('/').pop().toLowerCase() === postParam.toLowerCase()
+                        ) {
+                            found = { category: cat, post };
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+            }
+
+            if (found) {
+                const { category, post } = found;
+                const filePath = getPostPath(category, post);
+                // Small delay to let the page render first
+                setTimeout(() => loadContent(post.title, category.name, filePath), 100);
+            } else {
+                console.warn(`[URL Redirect] No post found for: "${postParam}". Check the post registry.`);
+            }
+        }
     </script>
 </body>
 

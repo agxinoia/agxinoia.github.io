@@ -86,43 +86,57 @@ Once the cookie weakness was established, the escalation to SQL injection was al
 
 During follow-up testing of the raffle workflow, I observed behavior consistent with **stacked SQL injection**. A time-delay payload (`WAITFOR DELAY '0:0:5'`) produced a measurable response delay, indicating that attacker-controlled input was being concatenated into a SQL Server query without parameterization.
 
-<svg viewBox="0 0 520 240" width="100%" role="img" aria-label="Exploit escalation timeline">
+<svg viewBox="0 0 580 200" width="100%" role="img" aria-label="Exploit escalation timeline">
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="rgba(255,255,255,0.18)"/>
+    </marker>
+  </defs>
   <style>
-    .node-text { fill: #ededed; font: 12px Inter, sans-serif; font-weight: 500; }
-    .sub-text { fill: #737373; font: 10px Inter, sans-serif; }
-    .line { stroke: rgba(255,255,255,0.1); stroke-width: 2; }
-    .point { fill: #ffffff; }
-    .danger { fill: #ef4444; }
+    .node-text { fill: #ededed; font: 500 11.5px Inter, sans-serif; }
+    .sub-text  { fill: #555;    font: 10px Inter, sans-serif; }
+    .tick-line { stroke: rgba(255,255,255,0.08); stroke-width: 1.5; stroke-dasharray: 4 3; }
   </style>
-  <rect x="0" y="0" width="520" height="240" fill="#0a0a0a" rx="12"></rect>
-  
-  <!-- Timeline Line -->
-  <line x1="60" y1="180" x2="460" y2="180" class="line"></line>
-  
-  <!-- Step 1 -->
-  <circle cx="80" y="180" r="4" class="point"></circle>
-  <text x="80" y="160" text-anchor="middle" class="node-text">Recon</text>
-  <text x="80" y="200" text-anchor="middle" class="sub-text">Traffic Proxying</text>
-  
-  <!-- Step 2 -->
-  <circle cx="180" y="180" r="4" class="point"></circle>
-  <text x="180" y="160" text-anchor="middle" class="node-text">Discovery</text>
-  <text x="180" y="200" text-anchor="middle" class="sub-text">Serialized Cookie</text>
-  
-  <!-- Step 3 -->
-  <circle cx="280" y="180" r="4" class="point"></circle>
-  <text x="280" y="160" text-anchor="middle" class="node-text">IDOR</text>
-  <text x="280" y="200" text-anchor="middle" class="sub-text">Account Takeover</text>
-  
-  <!-- Step 4 -->
-  <circle cx="380" y="180" r="6" class="danger"></circle>
-  <text x="380" y="160" text-anchor="middle" class="node-text" style="fill:#ef4444">SQLi</text>
-  <text x="380" y="200" text-anchor="middle" class="sub-text">Database Access</text>
-  
-  <!-- Step 5 -->
-  <circle cx="440" y="180" r="4" class="point"></circle>
-  <text x="440" y="160" text-anchor="middle" class="node-text">Disclosure</text>
-  <text x="440" y="200" text-anchor="middle" class="sub-text">Source Exposed</text>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="580" height="200" fill="#0a0a0a" rx="12"/>
+
+  <!-- Horizontal spine -->
+  <line x1="50" y1="100" x2="542" y2="100"
+        stroke="rgba(255,255,255,0.1)" stroke-width="2"
+        marker-end="url(#arrow)"/>
+
+  <!-- ── Step 1: Recon ── -->
+  <line x1="80" y1="100" x2="80" y2="70" class="tick-line"/>
+  <circle cx="80" cy="100" r="5" fill="#ededed"/>
+  <text x="80" y="62"  text-anchor="middle" class="node-text">Recon</text>
+  <text x="80" y="126" text-anchor="middle" class="sub-text">Traffic Proxying</text>
+
+  <!-- ── Step 2: Discovery ── -->
+  <line x1="185" y1="100" x2="185" y2="130" class="tick-line"/>
+  <circle cx="185" cy="100" r="5" fill="#ededed"/>
+  <text x="185" y="148" text-anchor="middle" class="node-text">Discovery</text>
+  <text x="185" y="62"  text-anchor="middle" class="sub-text">Serialized Cookie</text>
+
+  <!-- ── Step 3: IDOR ── -->
+  <line x1="295" y1="100" x2="295" y2="70" class="tick-line"/>
+  <circle cx="295" cy="100" r="5" fill="#ededed"/>
+  <text x="295" y="62"  text-anchor="middle" class="node-text">IDOR</text>
+  <text x="295" y="126" text-anchor="middle" class="sub-text">Account Takeover</text>
+
+  <!-- ── Step 4: SQLi (danger) ── -->
+  <line x1="400" y1="100" x2="400" y2="130" class="tick-line"/>
+  <circle cx="400" cy="100" r="7" fill="#ef4444"/>
+  <!-- outer glow ring -->
+  <circle cx="400" cy="100" r="11" fill="none" stroke="#ef4444" stroke-width="1" opacity="0.3"/>
+  <text x="400" y="148" text-anchor="middle" class="node-text" fill="#ef4444">SQLi</text>
+  <text x="400" y="62"  text-anchor="middle" class="sub-text">Database Access</text>
+
+  <!-- ── Step 5: Disclosure ── -->
+  <line x1="500" y1="100" x2="500" y2="70" class="tick-line"/>
+  <circle cx="500" cy="100" r="5" fill="#ededed"/>
+  <text x="500" y="62"  text-anchor="middle" class="node-text">Disclosure</text>
+  <text x="500" y="126" text-anchor="middle" class="sub-text">Source Exposed</text>
 </svg>
 
 ## Impact Overview
