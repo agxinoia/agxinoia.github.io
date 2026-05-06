@@ -5,14 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arki</title>
+    <meta name="description" content="Arki's cybersecurity, homelab, reverse engineering, and incident response notes.">
+    <meta name="theme-color" content="#050505">
     <link id="site-favicon" rel="icon" href="favicon-32x32.png" type="image/png">
     <!-- Inter Font for that premium agency look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
@@ -22,7 +23,7 @@
             --text-muted: #737373;
             --border-color: rgba(255, 255, 255, 0.06);
             --accent: #ffffff;
-            --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-smooth: color 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             --font-main: 'Inter', sans-serif;
         }
 
@@ -88,156 +89,12 @@
                 display: none !important;
             }
 
-            .content-area {
-                padding: 5rem 1.25rem 6rem 1.25rem;
-            }
         }
 
-        /* --- MOBILE HEADER --- */
-        .mobile-header {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 200;
-            height: 56px;
-            background: rgba(5, 5, 5, 0.92);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-color);
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.25rem;
-        }
+        /* (mobile header & drawer removed — footer handles all nav) */
 
-        .mobile-header-brand {
-            font-size: 1.35rem;
-            font-weight: 500;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .mobile-header-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .mobile-icon-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.05rem;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            transition: var(--transition-smooth);
-        }
-
-        .mobile-icon-btn:hover,
-        .mobile-icon-btn.active {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        /* --- MOBILE DRAWER (Explorer panel) --- */
-        .mobile-drawer-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 300;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .mobile-drawer-overlay.open {
-            opacity: 1;
-        }
-
-        .mobile-drawer {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: min(320px, 88vw);
-            background: #0d0d0d;
-            border-left: 1px solid var(--border-color);
-            z-index: 301;
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem 1.25rem;
-            overflow-y: auto;
-        }
-
-        .mobile-drawer.open {
-            transform: translateX(0);
-        }
-
-        .mobile-drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.75rem;
-        }
-
-        .mobile-drawer-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .mobile-drawer-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 0.25rem;
-            transition: color 0.2s;
-        }
-
-        .mobile-drawer-close:hover {
-            color: var(--text-primary);
-        }
-
-        /* --- MOBILE FLOATING TOC BUTTON --- */
-        .mobile-toc-btn {
-            display: none;
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.25rem;
-            z-index: 150;
-            background: rgba(20, 20, 20, 0.95);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
-            padding: 0.6rem 1rem;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            font-family: var(--font-main);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            cursor: pointer;
-            backdrop-filter: blur(12px);
-            transition: var(--transition-smooth);
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .mobile-toc-btn:hover {
-            color: var(--text-primary);
-            border-color: rgba(255,255,255,0.22);
-        }
+        /* floating TOC button hidden — Contents tab in footer replaces it */
+        .mobile-toc-btn { display: none !important; }
 
         /* --- MOBILE TOC SHEET --- */
         .mobile-toc-sheet {
@@ -253,6 +110,8 @@
             padding: 1rem 1.5rem 2rem;
             max-height: 60vh;
             overflow-y: auto;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
             transform: translateY(100%);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -267,6 +126,8 @@
             background: #333;
             border-radius: 2px;
             margin: 0 auto 1.25rem;
+            cursor: grab;
+            touch-action: none;
         }
 
         .mobile-toc-sheet .mobile-toc-heading-title {
@@ -309,13 +170,142 @@
             z-index: 399;
         }
 
-        @media (max-width: 900px) {
-            .mobile-header {
-                display: flex;
-            }
+        /* --- MOBILE FOOTER — GLASS NAV BAR --- */
+        .mobile-footer {
+            --mobile-footer-y: clamp(0.6rem, 1.9vw, 0.85rem);
+            --mobile-footer-x: clamp(0.85rem, 4vw, 1.35rem);
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 150;
+            /* Glass: dark tint + strong blur + subtle border */
+            background: rgba(8, 8, 10, 0.55);
+            backdrop-filter: blur(28px) saturate(160%);
+            -webkit-backdrop-filter: blur(28px) saturate(160%);
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.04), 0 -8px 32px rgba(0,0,0,0.35);
+            padding: var(--mobile-footer-y) var(--mobile-footer-x) calc(var(--mobile-footer-y) + env(safe-area-inset-bottom));
+        }
 
-            .mobile-toc-btn {
-                display: flex;
+        .mobile-footer-inner {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.65rem, 2.7vw, 1.05rem);
+            min-height: 44px;
+        }
+
+        .mobile-footer-name {
+            font-size: clamp(0.72rem, 2.3vw, 0.84rem);
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .mobile-footer-divider {
+            width: 1px;
+            height: clamp(18px, 5.5vw, 24px);
+            background: rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+
+        .mobile-footer-tabs {
+            display: flex;
+            gap: clamp(0.35rem, 2.4vw, 0.9rem);
+            flex: 1;
+            position: relative;
+            justify-content: flex-end;
+            min-width: 0;
+        }
+
+        /* Subtle baseline across all tabs */
+        .mobile-footer-tabs::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+        }
+
+        .mobile-footer-tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            font-size: clamp(0.64rem, 2.35vw, 0.76rem);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            padding: 0 clamp(0.12rem, 1.6vw, 0.45rem);
+            position: relative;
+            z-index: 1;
+            border: none;
+            background: none;
+            font-family: var(--font-main);
+            white-space: nowrap;
+        }
+
+        .mobile-footer-tab.active {
+            color: var(--text-primary);
+        }
+
+        .mobile-footer-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        /* Explorer sheet triggered from footer */
+        .mobile-explorer-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 400;
+            background: rgba(10, 10, 10, 0.96);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid var(--border-color);
+            border-radius: 20px 20px 0 0;
+            padding: 1rem 1.5rem 2rem;
+            max-height: 72vh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-explorer-sheet.open {
+            transform: translateY(0);
+        }
+
+        .mobile-explorer-sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: #2a2a2a;
+            border-radius: 2px;
+            margin: 0 auto 1.25rem;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-footer {
+                display: block;
             }
         }
 
@@ -581,6 +571,13 @@
             padding: 5rem 0 10rem 0;
             /* Extra bottom padding so scroll reaches end cleanly */
             animation: fadeIn 1s ease-out forwards;
+            min-width: 0;
+        }
+
+        @media (max-width: 900px) {
+            .content-area {
+                padding: 2rem clamp(1.5rem, 6vw, 2.5rem) 7.75rem clamp(1.5rem, 6vw, 2.5rem);
+            }
         }
 
         @keyframes fadeIn {
@@ -599,6 +596,10 @@
             font-size: 1rem;
             color: #b3b3b3;
             transition: opacity 0.3s ease;
+            max-width: 100%;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .md-content h1 {
@@ -647,6 +648,7 @@
 
         .md-content p {
             margin-bottom: 1.5rem;
+            overflow-wrap: anywhere;
         }
 
         .md-content a {
@@ -654,6 +656,7 @@
             text-decoration: none;
             border-bottom: 1px solid #333;
             transition: var(--transition-smooth);
+            overflow-wrap: anywhere;
         }
 
         .md-content a:hover {
@@ -793,7 +796,8 @@
         }
 
         /* Recent list one-line constraint */
-        #list-recent .explorer-item a {
+        #list-recent .explorer-item a,
+        #sheet-list-recent .explorer-item a {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -890,6 +894,17 @@
             color: #b3b3b3;
         }
 
+        @media (max-width: 600px) {
+            .md-content h1 {
+                font-size: 2rem;
+                line-height: 1.15;
+            }
+
+            .md-content .meta {
+                flex-wrap: wrap;
+            }
+        }
+
         .md-content table {
             width: 100%;
             border-collapse: collapse;
@@ -983,40 +998,7 @@
 
 <body>
 
-    <!-- MOBILE HEADER -->
-    <header class="mobile-header" id="mobile-header">
-        <a href="#" class="mobile-header-brand" id="mobile-brand-link">ARKI</a>
-        <div class="mobile-header-actions">
-            <button class="mobile-icon-btn" id="mobile-menu-btn" aria-label="Open menu" title="Browse Posts">
-                <i class="fa-solid fa-layer-group"></i>
-            </button>
-        </div>
-    </header>
 
-    <!-- MOBILE DRAWER OVERLAY -->
-    <div class="mobile-drawer-overlay" id="mobile-drawer-overlay"></div>
-
-    <!-- MOBILE DRAWER -->
-    <div class="mobile-drawer" id="mobile-drawer" role="dialog" aria-label="Post Explorer">
-        <div class="mobile-drawer-header">
-            <span class="mobile-drawer-title">Explorer</span>
-            <button class="mobile-drawer-close" id="mobile-drawer-close" aria-label="Close menu">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <!-- Explorer content cloned into drawer by JS -->
-        <nav class="explorer-nav" id="mobile-explorer-nav">
-            <div class="explorer-tab active" data-target="categories" data-mobile="true">Categories</div>
-            <div class="explorer-tab" data-target="recent" data-mobile="true">Recent</div>
-        </nav>
-        <div id="mobile-list-categories" style="margin-top: 1rem;"></div>
-        <ul class="explorer-list" id="mobile-list-recent" style="display: none; margin-top: 1rem;"></ul>
-    </div>
-
-    <!-- MOBILE TOC FLOATING BUTTON -->
-    <button class="mobile-toc-btn" id="mobile-toc-btn" aria-label="Table of Contents">
-        <i class="fa-solid fa-list"></i> Contents
-    </button>
 
     <!-- MOBILE TOC SHEET OVERLAY -->
     <div class="mobile-sheet-overlay" id="mobile-sheet-overlay"></div>
@@ -1027,6 +1009,29 @@
         <div class="mobile-toc-heading-title">Contents</div>
         <nav id="mobile-toc-container"></nav>
     </div>
+
+    <!-- MOBILE EXPLORER SHEET OVERLAY -->
+    <div class="mobile-sheet-overlay" id="mobile-explorer-overlay" style="z-index:399;"></div>
+
+    <!-- MOBILE EXPLORER SHEET (opens from footer tabs) -->
+    <div class="mobile-explorer-sheet" id="mobile-explorer-sheet" role="dialog" aria-label="Explorer">
+        <div class="mobile-explorer-sheet-handle"></div>
+        <div id="sheet-list-categories"></div>
+        <ul class="explorer-list" id="sheet-list-recent" style="display:none;"></ul>
+    </div>
+
+    <!-- MOBILE FOOTER -->
+    <footer class="mobile-footer" id="mobile-footer">
+        <div class="mobile-footer-inner">
+            <span class="mobile-footer-name">ARKI</span>
+            <div class="mobile-footer-divider"></div>
+            <div class="mobile-footer-tabs">
+                <button class="mobile-footer-tab active" id="footer-tab-categories">Categories</button>
+                <button class="mobile-footer-tab" id="footer-tab-recent">Recent</button>
+                <button class="mobile-footer-tab" id="footer-tab-contents">Contents</button>
+            </div>
+        </div>
+    </footer>
 
     <div class="app-container">
 
@@ -1147,14 +1152,12 @@
 
     </div>
 
-    <!-- D3.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script>
         let tocObserver = null;
         let tocScrollListener = null;
         let currentGraphFocusTitle = null;
+        let graphRenderToken = 0;
+        let graphResizeTimer = null;
         const CONSOLE_WATERMARK = String.raw`::::    ::::      :::     :::::::::  ::::::::::      :::::::::  :::   :::      
 +:+:+: :+:+:+   :+: :+:   :+:    :+: :+:             :+:    :+: :+:   :+:      
 +:+ +:+:+ +:+  +:+   +:+  +:+    +:+ +:+             +:+    +:+  +:+ +:+       
@@ -1172,14 +1175,59 @@
 
         console.log(`%c${CONSOLE_WATERMARK}`, 'color: #8f96a3; font-weight: 600;');
 
-        // Initialize mermaid for dark theme
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: 'dark',
-            themeVariables: {
-                fontSize: '18px'
+        const CDN_SCRIPTS = {
+            d3: 'https://d3js.org/d3.v7.min.js',
+            marked: 'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
+            mermaid: 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'
+        };
+        const scriptPromises = new Map();
+        let mermaidReady = null;
+
+        function loadScriptOnce(globalName, src) {
+            if (window[globalName]) return Promise.resolve(window[globalName]);
+            if (scriptPromises.has(globalName)) return scriptPromises.get(globalName);
+
+            const promise = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.async = true;
+                script.crossOrigin = 'anonymous';
+                script.onload = () => resolve(window[globalName]);
+                script.onerror = () => reject(new Error(`Failed to load ${src}`));
+                document.head.appendChild(script);
+            });
+
+            scriptPromises.set(globalName, promise);
+            return promise;
+        }
+
+        function ensureMarked() {
+            return loadScriptOnce('marked', CDN_SCRIPTS.marked);
+        }
+
+        function ensureMermaid() {
+            if (!mermaidReady) {
+                mermaidReady = loadScriptOnce('mermaid', CDN_SCRIPTS.mermaid).then(() => {
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        theme: 'dark',
+                        themeVariables: {
+                            fontSize: '18px'
+                        }
+                    });
+                    return mermaid;
+                });
             }
-        });
+            return mermaidReady;
+        }
+
+        function runWhenIdle(callback) {
+            if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(callback, { timeout: 1500 });
+                return;
+            }
+            window.setTimeout(callback, 0);
+        }
 
         /* =========================================
            BLOG DATA REGISTRY
@@ -1190,8 +1238,8 @@
                 icon: 'fa-solid fa-server',
                 folder: 'Categories/Homelab',
                 posts: [
-                    { title: 'Proxmox Lab Setup', file: 'Proxmox.md', date: '2025-08-20', tags: [] },
-                    { title: 'Multi-OS Workflow', file: 'Operations systems.md', date: '2025-08-07', tags: [] }
+                    { title: 'Proxmox Lab Setup', file: 'Proxmox.md', date: '2025-08-20', tags: ['Homelab', 'Proxmox', 'pfSense', 'Kali Linux', 'Docker', 'VLANs'] },
+                    { title: 'Multi-OS Workflow', file: 'Operations systems.md', date: '2025-08-07', tags: ['Operating Systems', 'Windows', 'macOS', 'Arch Linux', 'Productivity', 'Cybersecurity'] }
                 ]
             },
             {
@@ -1205,7 +1253,7 @@
                 icon: 'fa-solid fa-fire-extinguisher',
                 folder: 'Categories/Incident Response & Case Studies',
                 posts: [
-                    { title: 'RevoFitness Zero-Day', file: 'final-report.md', date: '2026-05-01', tags: [] }
+                    { title: 'RevoFitness Zero-Day', file: 'final-report.md', date: '2026-05-01', tags: ['Incident Response', 'Case Studies', 'SQL Injection', 'IDOR', 'Authorization Bypass', 'SQL Server'] }
                 ]
             },
             {
@@ -1231,7 +1279,7 @@
                 icon: 'fa-solid fa-toolbox',
                 folder: 'Categories/Tool Guides',
                 posts: [
-                    { title: 'AutoVirt Sandbox Setup', file: 'tools.md', date: '2026-05-04', tags: [] }
+                    { title: 'AutoVirt Sandbox Setup', file: 'tools.md', date: '2026-05-04', tags: ['Tool Guides', 'AutoVirt', 'Arch Linux', 'KVM', 'QEMU', 'Malware Analysis'] }
                 ]
             },
             {
@@ -1239,7 +1287,7 @@
                 icon: 'fa-solid fa-code-compare',
                 folder: 'Categories/Reverse Engineering',
                 posts: [
-                    { title: 'Reversing Key System', file: 'Reversing Key System.md', date: '2025-08-29', tags: [] }
+                    { title: 'Reversing Key System', file: 'Reversing Key System.md', date: '2025-08-29', tags: ['Reverse Engineering', 'JavaScript', 'Chrome Extension', 'License Validation', 'Client-Side Security'] }
                 ]
             }
         ];
@@ -1307,6 +1355,7 @@
 
         async function hydratePostMetadata() {
             const tasks = [];
+            let changed = false;
 
             CATEGORIES.forEach((category) => {
                 category.posts.forEach((post) => {
@@ -1319,9 +1368,23 @@
                             })
                             .then((text) => {
                                 const { metadata } = parseFrontmatter(text);
-                                if (metadata.title) post.title = metadata.title;
-                                if (metadata.date) post.date = metadata.date;
-                                post.tags = metadata.tags.length > 0 ? metadata.tags : (post.tags || []);
+                                if (metadata.title && metadata.title !== post.title) {
+                                    post.title = metadata.title;
+                                    changed = true;
+                                }
+                                if (metadata.date && metadata.date !== post.date) {
+                                    post.date = metadata.date;
+                                    changed = true;
+                                }
+                                if (metadata.tags.length > 0) {
+                                    const currentTags = post.tags || [];
+                                    if (metadata.tags.join('\u0000') !== currentTags.join('\u0000')) {
+                                        post.tags = metadata.tags;
+                                        changed = true;
+                                    }
+                                } else {
+                                    post.tags = post.tags || [];
+                                }
                             })
                             .catch((error) => {
                                 console.warn(`Failed to hydrate metadata for ${path}:`, error);
@@ -1332,19 +1395,37 @@
             });
 
             await Promise.all(tasks);
+            return changed;
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
+        function buildNavigation() {
+            buildCategories();
+            buildRecent();
+            buildSheetCategories();
+            buildSheetRecent();
+        }
+
+        function scheduleMetadataHydration() {
+            runWhenIdle(async () => {
+                const changed = await hydratePostMetadata();
+                if (!changed) return;
+                buildNavigation();
+                initGraph();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
             initTOC();
             initExplorer();
             initMobileUI();
-            await hydratePostMetadata();
-            buildCategories();
-            buildRecent();
-            buildMobileCategories();
-            buildMobileRecent();
+            buildNavigation();
             initGraph();
             handleURLRedirect();
+            scheduleMetadataHydration();
+            window.addEventListener('resize', () => {
+                window.clearTimeout(graphResizeTimer);
+                graphResizeTimer = window.setTimeout(initGraph, 150);
+            }, { passive: true });
         });
 
         /* =========================================
@@ -1436,7 +1517,7 @@
                     }
                 }
             };
-            window.addEventListener('scroll', tocScrollListener);
+            window.addEventListener('scroll', tocScrollListener, { passive: true });
         }
 
         /* =========================================
@@ -1487,6 +1568,25 @@
             });
         }
 
+        function timeAgo(date) {
+            // Use a fixed reference date matching the blog timeline for consistent labels.
+            const now = new Date('2026-05-04T12:00:00Z');
+            let seconds = Math.floor((now - date) / 1000);
+            if (seconds < 0) seconds = 0;
+
+            let interval = seconds / 31536000;
+            if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " year ago" : " years ago");
+            interval = seconds / 2592000;
+            if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " month ago" : " months ago");
+            interval = seconds / 86400;
+            if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " day ago" : " days ago");
+            interval = seconds / 3600;
+            if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " hour ago" : " hours ago");
+            interval = seconds / 60;
+            if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " minute ago" : " minutes ago");
+            return "just now";
+        }
+
         /* =========================================
            3. BUILD RECENT LIST
            ========================================= */
@@ -1509,25 +1609,6 @@
 
             // Sort by date descending
             allPosts.sort((a, b) => b.date - a.date);
-
-            function timeAgo(date) {
-                // Use a simulated current date matching the blog timeline (May 4, 2026) for consistency, or standard current date
-                const now = new Date('2026-05-04T12:00:00Z');
-                let seconds = Math.floor((now - date) / 1000);
-                if (seconds < 0) seconds = 0; // handle future dates just in case
-
-                let interval = seconds / 31536000;
-                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " year ago" : " years ago");
-                interval = seconds / 2592000;
-                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " month ago" : " months ago");
-                interval = seconds / 86400;
-                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " day ago" : " days ago");
-                interval = seconds / 3600;
-                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " hour ago" : " hours ago");
-                interval = seconds / 60;
-                if (interval >= 1) return Math.floor(interval) + (Math.floor(interval) === 1 ? " minute ago" : " minutes ago");
-                return "just now";
-            }
 
             allPosts.forEach(post => {
                 const li = document.createElement('li');
@@ -1590,9 +1671,23 @@
         /* =========================================
            5. OBSIDIAN GRAPH (D3.js) — Real Data
            ========================================= */
-        function initGraph() {
+        async function initGraph() {
+            const renderToken = ++graphRenderToken;
             const container = document.getElementById('obsidian-graph');
             if (!container) return;
+            if (window.matchMedia('(max-width: 900px)').matches || container.clientWidth === 0 || container.clientHeight === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            try {
+                await loadScriptOnce('d3', CDN_SCRIPTS.d3);
+            } catch (error) {
+                console.warn('Failed to load graph library:', error);
+                container.textContent = 'Graph unavailable';
+                return;
+            }
+            if (renderToken !== graphRenderToken) return;
 
             container.innerHTML = '';
             const width = container.clientWidth;
@@ -1973,6 +2068,7 @@
                     const { metadata, body } = parseFrontmatter(text);
                     if (metadata.title) resolvedTitle = metadata.title;
                     if (metadata.date) resolvedDate = metadata.date;
+                    await ensureMarked();
                     fetchedContent = marked.parse(body);
                 } catch (error) {
                     fetchedContent = `<p style="color: #ff5555;">Error loading content: ${error.message}</p>
@@ -1989,7 +2085,7 @@
             currentGraphFocusTitle = matchedPost ? resolvedTitle : null;
             initGraph();
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 let bodyContent = fetchedContent;
 
                 if (!bodyContent) {
@@ -2042,6 +2138,11 @@
                 // Fade in
                 article.style.opacity = 1;
 
+                article.querySelectorAll('img').forEach((img) => {
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                });
+
                 // Clear existing TOC
                 const tocContainer = document.getElementById('toc-container');
                 tocContainer.innerHTML = '';
@@ -2061,10 +2162,14 @@
                         pre.replaceWith(div);
                     });
 
-                    // Render mermaid diagrams
-                    mermaid.run({
-                        querySelector: '.mermaid'
-                    }).catch(e => console.error("Mermaid parsing error", e));
+                    try {
+                        await ensureMermaid();
+                        await mermaid.run({
+                            querySelector: '.mermaid'
+                        });
+                    } catch (e) {
+                        console.error("Mermaid parsing error", e);
+                    }
                 }
 
                 // Hydrate data-viz placeholders (SVG built via DOM to bypass marked.js mangling)
@@ -2177,100 +2282,129 @@
            8. MOBILE UI
            ========================================= */
         function initMobileUI() {
-            const menuBtn = document.getElementById('mobile-menu-btn');
-            const drawer = document.getElementById('mobile-drawer');
-            const overlay = document.getElementById('mobile-drawer-overlay');
-            const closeBtn = document.getElementById('mobile-drawer-close');
-            const brandLink = document.getElementById('mobile-brand-link');
-            const tocBtn = document.getElementById('mobile-toc-btn');
             const tocSheet = document.getElementById('mobile-toc-sheet');
             const sheetOverlay = document.getElementById('mobile-sheet-overlay');
+            const explorerSheet = document.getElementById('mobile-explorer-sheet');
+            const explorerOverlay = document.getElementById('mobile-explorer-overlay');
+            const footerTabCategories = document.getElementById('footer-tab-categories');
+            const footerTabRecent = document.getElementById('footer-tab-recent');
+            const footerTabContents = document.getElementById('footer-tab-contents');
 
-            function openDrawer() {
-                overlay.style.display = 'block';
-                drawer.style.display = 'flex';
-                requestAnimationFrame(() => {
-                    overlay.classList.add('open');
-                    drawer.classList.add('open');
-                });
-                menuBtn.classList.add('active');
-                document.body.style.overflow = 'hidden';
+            /* -- active tab state -- */
+            function setActiveFooterTab(id) {
+                [footerTabCategories, footerTabRecent, footerTabContents].forEach(t => t.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
             }
 
-            function closeDrawer() {
-                overlay.classList.remove('open');
-                drawer.classList.remove('open');
-                menuBtn.classList.remove('active');
-                document.body.style.overflow = '';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    drawer.style.display = 'none';
-                }, 400);
-            }
-
+            /* -- TOC sheet -- */
             function openTocSheet() {
                 buildMobileTOC();
                 sheetOverlay.style.display = 'block';
                 tocSheet.style.display = 'block';
-                requestAnimationFrame(() => {
-                    tocSheet.classList.add('open');
-                });
+                requestAnimationFrame(() => tocSheet.classList.add('open'));
                 document.body.style.overflow = 'hidden';
             }
-
             function closeTocSheet() {
                 tocSheet.classList.remove('open');
                 document.body.style.overflow = '';
-                setTimeout(() => {
-                    sheetOverlay.style.display = 'none';
-                    tocSheet.style.display = 'none';
-                }, 400);
+                setTimeout(() => { sheetOverlay.style.display = 'none'; tocSheet.style.display = 'none'; }, 400);
             }
 
-            menuBtn.addEventListener('click', openDrawer);
-            overlay.addEventListener('click', closeDrawer);
-            closeBtn.addEventListener('click', closeDrawer);
-            tocBtn.addEventListener('click', openTocSheet);
-            sheetOverlay.addEventListener('click', closeTocSheet);
+            function bindSwipeToClose(sheet, closeSheet) {
+                let startY = 0, startX = 0, isDragging = false, canDrag = false;
 
-            brandLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                loadContent('Professional Summary', 'Profile');
-            });
+                sheet.addEventListener('touchstart', e => {
+                    startY = e.touches[0].clientY;
+                    startX = e.touches[0].clientX;
+                    isDragging = false;
+                    const startedOnHandle = e.target.closest && e.target.closest('.mobile-toc-sheet-handle, .mobile-explorer-sheet-handle');
+                    canDrag = !!startedOnHandle || sheet.scrollTop <= 0;
+                }, { passive: true });
 
-            // Mobile explorer tabs
-            const mobileTabs = document.querySelectorAll('#mobile-explorer-nav .explorer-tab');
-            const mobileListCategories = document.getElementById('mobile-list-categories');
-            const mobileListRecent = document.getElementById('mobile-list-recent');
+                sheet.addEventListener('touchmove', e => {
+                    if (!canDrag) return;
+                    const dy = e.touches[0].clientY - startY;
+                    const dx = Math.abs(e.touches[0].clientX - startX);
+                    if (dy <= 10 || dx >= dy) return;
+                    isDragging = true;
+                    sheet.style.transition = 'none';
+                    sheet.style.transform = `translateY(${dy}px)`;
+                    e.preventDefault();
+                }, { passive: false });
 
-            mobileTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    mobileTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const target = tab.getAttribute('data-target');
-                    if (target === 'categories') {
-                        mobileListCategories.style.display = 'block';
-                        mobileListRecent.style.display = 'none';
-                    } else {
-                        mobileListCategories.style.display = 'none';
-                        mobileListRecent.style.display = 'flex';
+                function finishSwipe(e) {
+                    const dy = e.changedTouches[0].clientY - startY;
+                    sheet.style.transition = '';
+                    sheet.style.transform = '';
+                    if (isDragging && dy > 72) {
+                        closeSheet();
+                        setActiveFooterTab('footer-tab-categories');
                     }
-                });
+                    isDragging = false;
+                    canDrag = false;
+                }
+
+                sheet.addEventListener('touchend', finishSwipe, { passive: true });
+                sheet.addEventListener('touchcancel', finishSwipe, { passive: true });
+            }
+
+            /* -- Explorer sheet -- */
+            function syncSheetTab(target) {
+                const cats = document.getElementById('sheet-list-categories');
+                const rec = document.getElementById('sheet-list-recent');
+                if (target === 'categories') { cats.style.display = 'block'; rec.style.display = 'none'; }
+                else { cats.style.display = 'none'; rec.style.display = 'flex'; }
+            }
+            function openExplorerSheet(target) {
+                syncSheetTab(target);
+                explorerOverlay.style.display = 'block';
+                explorerSheet.style.display = 'block';
+                requestAnimationFrame(() => explorerSheet.classList.add('open'));
+                document.body.style.overflow = 'hidden';
+            }
+            function closeExplorerSheet() {
+                explorerSheet.classList.remove('open');
+                document.body.style.overflow = '';
+                setTimeout(() => { explorerOverlay.style.display = 'none'; explorerSheet.style.display = 'none'; }, 400);
+            }
+
+            bindSwipeToClose(tocSheet, closeTocSheet);
+            bindSwipeToClose(explorerSheet, closeExplorerSheet);
+
+            /* footer tab clicks */
+            footerTabCategories.addEventListener('click', () => {
+                setActiveFooterTab('footer-tab-categories');
+                closeTocSheet();
+                openExplorerSheet('categories');
+            });
+            footerTabRecent.addEventListener('click', () => {
+                setActiveFooterTab('footer-tab-recent');
+                closeTocSheet();
+                openExplorerSheet('recent');
+            });
+            footerTabContents.addEventListener('click', () => {
+                setActiveFooterTab('footer-tab-contents');
+                closeExplorerSheet();
+                openTocSheet();
             });
 
-            // Initialize drawer as hidden
-            overlay.style.display = 'none';
-            drawer.style.display = 'none';
+            /* overlay dismiss */
+            explorerOverlay.addEventListener('click', () => { closeExplorerSheet(); setActiveFooterTab('footer-tab-categories'); });
+            sheetOverlay.addEventListener('click', () => { closeTocSheet(); setActiveFooterTab('footer-tab-categories'); });
+
+            /* init hidden */
             tocSheet.style.display = 'none';
             sheetOverlay.style.display = 'none';
+            explorerSheet.style.display = 'none';
+            explorerOverlay.style.display = 'none';
         }
 
-        function buildMobileCategories() {
-            const container = document.getElementById('mobile-list-categories');
+        /* Build categories inside the explorer bottom-sheet (footer-triggered) */
+        function buildSheetCategories() {
+            const container = document.getElementById('sheet-list-categories');
             if (!container) return;
             container.innerHTML = '';
 
-            // Clone the desktop categories logic but for mobile
             CATEGORIES.forEach(cat => {
                 const group = document.createElement('div');
                 group.className = 'category-group';
@@ -2296,25 +2430,17 @@
                         a.textContent = post.title;
                         a.addEventListener('click', (e) => {
                             e.preventDefault();
-                            const filePath = getPostPath(cat, post);
-                            loadContent(post.title, cat.name, filePath);
-                            // Close the drawer after selection
-                            const drawer = document.getElementById('mobile-drawer');
-                            const overlay = document.getElementById('mobile-drawer-overlay');
-                            if (drawer.classList.contains('open')) {
-                                overlay.classList.remove('open');
-                                drawer.classList.remove('open');
-                                document.body.style.overflow = '';
-                                setTimeout(() => {
-                                    overlay.style.display = 'none';
-                                    drawer.style.display = 'none';
-                                }, 400);
-                            }
+                            loadContent(post.title, cat.name, getPostPath(cat, post));
+                            // Close explorer sheet
+                            const es = document.getElementById('mobile-explorer-sheet');
+                            const eo = document.getElementById('mobile-explorer-overlay');
+                            es.classList.remove('open');
+                            document.body.style.overflow = '';
+                            setTimeout(() => { eo.style.display='none'; es.style.display='none'; }, 400);
                         });
                         li.appendChild(a);
                         ul.appendChild(li);
                     });
-
                     postsDiv.appendChild(ul);
                     group.appendChild(postsDiv);
                 }
@@ -2322,20 +2448,16 @@
             });
         }
 
-        function buildMobileRecent() {
-            const list = document.getElementById('mobile-list-recent');
+        /* Build recent inside the explorer bottom-sheet */
+        function buildSheetRecent() {
+            const list = document.getElementById('sheet-list-recent');
             if (!list) return;
             list.innerHTML = '';
 
             const allPosts = [];
             CATEGORIES.forEach(cat => {
                 cat.posts.forEach(post => {
-                    allPosts.push({
-                        title: post.title,
-                        file: getPostPath(cat, post),
-                        category: cat.name,
-                        date: post.date ? new Date(post.date) : new Date()
-                    });
+                    allPosts.push({ title: post.title, file: getPostPath(cat, post), category: cat.name, date: post.date ? new Date(post.date) : new Date() });
                 });
             });
             allPosts.sort((a, b) => b.date - a.date);
@@ -2345,21 +2467,16 @@
                 li.className = 'explorer-item';
                 const a = document.createElement('a');
                 a.href = '#';
-                a.innerHTML = `<span style="font-weight:500;">${post.title}</span>`;
+                a.innerHTML = `<span style="font-weight:500;">${post.title}</span> <span style="font-size:0.7rem;color:#555;">&middot; ${timeAgo(post.date)}</span>`;
+                a.title = `${post.title} · ${timeAgo(post.date)}`;
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
                     loadContent(post.title, post.category, post.file);
-                    const drawer = document.getElementById('mobile-drawer');
-                    const overlay = document.getElementById('mobile-drawer-overlay');
-                    if (drawer.classList.contains('open')) {
-                        overlay.classList.remove('open');
-                        drawer.classList.remove('open');
-                        document.body.style.overflow = '';
-                        setTimeout(() => {
-                            overlay.style.display = 'none';
-                            drawer.style.display = 'none';
-                        }, 400);
-                    }
+                    const es = document.getElementById('mobile-explorer-sheet');
+                    const eo = document.getElementById('mobile-explorer-overlay');
+                    es.classList.remove('open');
+                    document.body.style.overflow = '';
+                    setTimeout(() => { eo.style.display='none'; es.style.display='none'; }, 400);
                 });
                 li.appendChild(a);
                 list.appendChild(li);
